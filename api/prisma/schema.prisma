@@ -13,3 +13,130 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+// ---------- Enums ----------
+enum AccountType {
+  CASH
+  CARD
+  BANK
+}
+
+enum CategoryKind {
+  EXPENSE
+  INCOME
+}
+
+enum Currency {
+  PLN
+  EUR
+  USD
+  GBP
+}
+
+// ---------- Models ----------
+model User {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  hash         String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+
+  accounts     Account[]
+  categories   Category[]
+  budgets      Budget[]
+  transactions Transaction[]
+
+  @@index([email])
+}
+
+model Account {
+  id        String      @id @default(cuid())
+  userId    String
+  name      String
+  type      AccountType
+  currency  Currency
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([userId, name])
+}
+
+model Category {
+  id        String       @id @default(cuid())
+  userId    String
+  name      String
+  kind      CategoryKind
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  budgetItems  BudgetItem[]
+
+
+  @@unique([userId, kind, name])
+  @@index([userId, kind])
+}
+
+model Transaction {
+  id         String    @id @default(cuid())
+  userId     String
+  accountId  String
+  categoryId String?
+  date       DateTime
+  payee      String
+  note       String?
+
+  amount     Decimal   @db.Decimal(14, 2)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account  Account   @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+
+  @@index([userId, date])
+  @@index([userId, categoryId, date])
+  @@index([userId, accountId, date])
+}
+
+model Budget {
+  id        String    @id @default(cuid())
+  userId    String
+
+  month     Int
+  currency  Currency
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user   User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items  BudgetItem[]
+
+  @@unique([userId, month])
+  @@index([userId, month])
+}
+
+model BudgetItem {
+  id          String   @id @default(cuid())
+  budgetId    String
+  categoryId  String
+
+  limit       Decimal  @db.Decimal(14, 2)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+
+  budget     Budget   @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@unique([budgetId, categoryId])
+  @@index([budgetId])
+  @@index([categoryId])
+}
