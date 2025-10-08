@@ -1,35 +1,24 @@
-import dotenv from 'dotenv';
-import express from 'express';
-import helmet from "helmet";
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import morgan from 'morgan';
+import 'dotenv/config'
+import express from 'express'
+import helmet from 'helmet'
+import cors from 'cors'
+import cookieParser from 'cookie-parser'
+import morgan from 'morgan'
+import { env } from './lib/env'
+import { auth } from './modules/auth/router'
 
-dotenv.config();
+const app = express()
 
-const app = express();
+app.use(helmet())
+app.use(cors({ origin: env.WEB_ORIGIN, credentials: true }))
+app.use(cookieParser())
+app.use(express.json({ limit: '1mb' }))
+app.use(morgan('dev'))
 
-const PORT = process.env.PORT || 3001;
+app.get('/healthz', (_req, res) => res.json({ ok: true }))
 
-app.use(helmet());
-app.use(cors({
-  origin: process.env.WEB_ORIGIN,
-  credentials: true
-}));
-app.use(cookieParser());
-app.use(morgan('combined'));
+app.use('/auth', auth)
 
-app.use(express.json({ limit: '1mb' }));
-app.use(express.urlencoded({ extended: true, limit: '1mb' }));
-
-app.get('/healthz', (_req, res) => {
-  res.json({ ok: true });
-});
-
-app.get('/', (_req, res) => {
-  res.send('Hello World!');
-});
-
-app.listen(PORT, () => {
-  return console.log(`Express is listening at http://localhost:${PORT}`);
-});
+app.listen(env.PORT, () => {
+  console.log(`[api] up on http://localhost:${env.PORT}`)
+})
