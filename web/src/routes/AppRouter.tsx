@@ -8,10 +8,11 @@ import ImportPage from "@/pages/Import";
 import Login from "@/pages/Auth/Login";
 import Register from "@/pages/Auth/Register";
 import NotFound from "@/pages/NotFound";
+import { useAppSelector } from "@/app/hooks";
 
 function PrivateRoute({ children }: { children: React.ReactElement }) {
-  const isAuth = false; 
-  return isAuth ? children : <Navigate to="/login" replace />;
+  const { status} = useAppSelector(u => u.user);
+  return status === 'loggedIn' ? children : <Navigate to="/login" replace />;
 }
 
 export default function AppRouter() {

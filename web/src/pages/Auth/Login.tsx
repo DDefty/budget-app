@@ -3,9 +3,46 @@ import { Button } from '@/components/ui/button';
 import Input from '@/components/ui/input';
 import heroImage from '@/assets/hero.png';
 import { Link } from "react-router";
+import { useState } from 'react';
+import authApi from '@/lib/auth';
+import { useNavigate } from 'react-router-dom'
+import { z } from 'zod'
+import { useAppDispatch } from '@/app/hooks';
+import {
+    isLoggedIn
+} from '../../features/userSlice';
 
+const signInSchema = z.object({
+    email: z.email("This is not a valid email.").min(1, { message: "This field has to be filled." }),
+    password: z.string().min(1, { message: "This field has to be filled." }),
+})
 
 export default function Login() {
+    const [formData, setFormData] = useState({
+        email: '',
+        password: '',
+    })
+
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate()
+
+
+
+    const handleSubmit = async (data: typeof formData) => {
+        try {
+            const validatedData = signInSchema.parse(data)
+
+            await authApi.login(validatedData).then(data => dispatch(isLoggedIn(data.email)));
+            navigate('/dashboard')
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
+        setFormData((prev) => ({ ...prev, [name]: value }))
+    }
     return (
         <div className="bg-background-light dark:bg-background-dark font-display">
             <div className="flex min-h-screen">
@@ -18,7 +55,10 @@ export default function Login() {
                             </div>
                             <p className='mt-2 text-sm text-muted-light dark:text-muted-dark'>Welcome! Log in or create an account to manage your budget.</p>
                         </div>
-                        <form className="space-y-3">
+                        <form className="space-y-3" onSubmit={(e) => {
+                            e.preventDefault()
+                            handleSubmit(formData)
+                        }}>
                             <label htmlFor="email" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
                                 Email or Username
                             </label>
@@ -27,7 +67,9 @@ export default function Login() {
                                     id="email"
                                     name="email"
                                     type="email"
+                                    value={formData.email}
                                     required
+                                    onChange={handleChange}
                                     className='w-full border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark focus:border-primary'
                                 />
                             </div>
@@ -39,19 +81,21 @@ export default function Login() {
                                     id="password"
                                     name="password"
                                     type="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
                                     required
                                     className='w-full border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark focus:border-primary'
                                 />
                             </div>
+                            <div className='mt-6'>
+                                <Link to="/dashboard" className='mt-6 text-primary hover:text-primary/80 text-sm font-medium'>Forgot your password?</Link>
+                            </div>
+                            <div className='mt-6'>
+                                <Button type="submit" className="w-full rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary py-2 px-4 text-sm font-semibold">
+                                    Log in
+                                </Button>
+                            </div>
                         </form>
-                        <div className='mt-6'>
-                            <Link to="/dashboard" className='mt-6 text-primary hover:text-primary/80 text-sm font-medium'>Forgot your password?</Link>
-                        </div>
-                        <div className='mt-6'>
-                            <Button type="submit" className="w-full rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary py-2 px-4 text-sm font-semibold">
-                                Log in
-                            </Button>
-                        </div>
                         <div className='my-6 justify-items-center'>
                             <p className='my-4 text-sm text-muted-light dark:text-muted-dark'>Or continue with</p>
                         </div>
