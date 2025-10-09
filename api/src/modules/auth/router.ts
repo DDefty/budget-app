@@ -20,18 +20,19 @@ const COOKIE_OPTIONS = {
 auth.post('/register', async (req, res) => {
   const parse = registerSchema.safeParse(req.body)
   if (!parse.success) return res.status(400).json({ error: 'Invalid payload', issues: parse.error.issues })
-  const { email, password } = parse.data
+  const { name, email, password, confirmPassword } = parse.data
+
+  if (password !== confirmPassword) return res.status(401).json({ error: `Passwords don't match` });
 
   const existing = await prisma.user.findUnique({ where: { email } })
   if (existing) return res.status(409).json({ error: 'Email already registered' })
 
   const hash = await bcrypt.hash(password, 12)
-  const user = await prisma.user.create({ data: { email, hash } })
+  const user = await prisma.user.create({ data: { name, email, hash } })
 
-  // optional: sign-in immediately after register
   const token = signJwt({ uid: user.id })
   res.cookie(env.COOKIE_NAME, token, COOKIE_OPTIONS)
-  res.status(201).json({ id: user.id, email: user.email })
+  res.status(201).json({ id: user.id, name: user.name, email: user.email })
 })
 
 auth.post('/login', async (req, res) => {
@@ -47,7 +48,7 @@ auth.post('/login', async (req, res) => {
 
   const token = signJwt({ uid: user.id })
   res.cookie(env.COOKIE_NAME, token, COOKIE_OPTIONS)
-  res.json({ id: user.id, email: user.email })
+  res.json({ id: user.id, name: user.name, email: user.email })
 })
 
 auth.post('/logout', (req, res) => {
@@ -63,7 +64,7 @@ auth.get('/me', async (req, res) => {
   const payload = verifyJwt(token)
   if (!payload) return res.status(401).json({ error: 'Invalid token' })
 
-  const user = await prisma.user.findUnique({ where: { id: payload.uid }, select: { id: true, email: true, createdAt: true } })
+  const user = await prisma.user.findUnique({ where: { id: payload.uid }, select: { id: true, name: true, email: true, createdAt: true } })
   if (!user) return res.status(401).json({ error: 'User not found' })
   res.json(user)
 })
