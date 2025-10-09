@@ -11,10 +11,12 @@ import { useAppDispatch } from '@/app/hooks';
 import {
     isLoggedIn
 } from '../../features/userSlice';
+import toast, { Toaster } from 'react-hot-toast';
+
 
 const signInSchema = z.object({
-    email: z.email("This is not a valid email.").min(1, { message: "This field has to be filled." }),
-    password: z.string().min(1, { message: "This field has to be filled." }),
+    email: z.email(),
+    password: z.string().min(8, { message: "Password has to be at least 8 characters long." }).max(72, { message: "Password cannot be longer than 72 characters." }),
 })
 
 export default function Login() {
@@ -34,8 +36,11 @@ export default function Login() {
 
             await authApi.login(validatedData).then(data => dispatch(isLoggedIn(data.email)));
             navigate('/dashboard')
-        } catch (error) {
-            console.log(error);
+        } catch (err) {
+            if (err instanceof z.ZodError) {
+                const messages = err.issues.map(e => e.message);
+                messages.map(m => toast.error(m));
+            }
         }
     }
 
@@ -45,6 +50,7 @@ export default function Login() {
     }
     return (
         <div className="bg-background-light dark:bg-background-dark font-display">
+            <Toaster />
             <div className="flex min-h-screen">
                 <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
                     <div className="mx-auto w-full max-w-sm lg:w-96">

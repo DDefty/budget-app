@@ -9,14 +9,18 @@ import authApi from '@/lib/auth';
 import { useAppDispatch } from '@/app/hooks';
 import { useNavigate } from 'react-router';
 import { isLoggedIn } from '@/features/userSlice';
+import toast, { Toaster } from 'react-hot-toast';
 
 
 const signUpSchema = z.object({
-    name: z.string().min(1, { message: "This field has to be filled." }),
-    email: z.email("This is not a valid email.").min(1, { message: "This field has to be filled." }),
-    password: z.string().min(1, { message: "This field has to be filled." }),
-    confirmPassword: z.string().min(1, { message: "This field has to be filled." }),
-})
+    name: z.string().min(8, { message: "Full Name has to be at least 8 characters long." }).max(20, { message: "Full Name cannot be longer than 20 characters." }),
+    email: z.email(),
+    password: z.string().min(8, { message: "Password has to be at least 8 characters long." }).max(72, { message: "Password cannot be longer than 72 characters." }),
+    confirmPassword: z.string().min(8, { message: "Password has to be at least 8 characters long." }).max(72, { message: "Password cannot be longer than 72 characters." }),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+});
 
 
 export default function Register() {
@@ -30,14 +34,19 @@ export default function Register() {
         confirmPassword: ''
     })
 
+
+
     const handleSubmit = async (data: typeof formData) => {
         try {
             const validatedData = signUpSchema.parse(data)
 
             await authApi.register(validatedData).then(data => dispatch(isLoggedIn(data.email)));
             navigate('/dashboard')
-        } catch (error) {
-            console.log(error);
+        } catch (err) {
+            if (err instanceof z.ZodError) {
+                const messages = err.issues.map(e => e.message);
+                messages.map(m => toast.error(m));
+            }
         }
     }
 
@@ -48,6 +57,7 @@ export default function Register() {
 
     return (
         <div className="bg-background-light dark:bg-background-dark font-display">
+            <Toaster />
             <div className="flex min-h-screen">
                 <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
                     <div className="mx-auto w-full max-w-sm lg:w-96">
