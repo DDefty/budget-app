@@ -61,7 +61,7 @@ export default function Login() {
                     <div className="mx-auto w-full max-w-sm lg:w-96">
                         <div className='mb-8'>
                             <div className='flex items-center gap-3 mb-2'>
-                                <BrandLogoSvg className='text-primary size-10' />
+                                <BrandLogoSvg className='fill-primary size-10' />
                                 <h1 className='text-4xl font-medium text-foreground-light dark:text-foreground-dark'>Finance Tracker</h1>
                             </div>
                             <p className='mt-2 text-sm text-muted-light dark:text-muted-dark'>Welcome! Log in or create an account to manage your budget.</p>
@@ -81,7 +81,7 @@ export default function Login() {
                                     value={formData.email}
                                     required
                                     onChange={handleChange}
-                                    className='w-full border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark focus:border-primary'
+                                    className='w-full border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark focus:border-primary'
                                 />
                             </div>
                             <label htmlFor="password" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
@@ -95,7 +95,7 @@ export default function Login() {
                                     value={formData.password}
                                     onChange={handleChange}
                                     required
-                                    className='w-full border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark focus:border-primary'
+                                    className='w-full border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark focus:border-primary'
                                 />
                             </div>
                             <div className='mt-6'>

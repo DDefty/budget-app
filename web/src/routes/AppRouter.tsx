@@ -30,9 +30,7 @@ export default function AppRouter() {
         <Route
           path="/dashboard"
           element={
-            <PrivateRoute>
               <AppLayout><Dashboard/></AppLayout>
-            </PrivateRoute>
           }
         />
         <Route
