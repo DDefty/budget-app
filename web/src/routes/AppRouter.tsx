@@ -24,9 +24,7 @@ export default function AppRouter() {
         <Route
           path="/"
           element={
-            <PrivateRoute>
               <AppLayout><Dashboard/></AppLayout>
-            </PrivateRoute>
           }
         />
         <Route
@@ -40,9 +38,7 @@ export default function AppRouter() {
         <Route
           path="/transactions"
           element={
-            <PrivateRoute>
               <AppLayout><Transactions/></AppLayout>
-            </PrivateRoute>
           }
         />
         <Route
