@@ -12,6 +12,7 @@ import {
     isLoggedIn
 } from '../../features/userSlice';
 import toast, { Toaster } from 'react-hot-toast';
+import { handleApiError, showAuthSuccess } from '@/lib/errorHandler';
 
 
 const signInSchema = z.object({
@@ -34,12 +35,16 @@ export default function Login() {
         try {
             const validatedData = signInSchema.parse(data)
 
-            await authApi.login(validatedData).then(data => dispatch(isLoggedIn(data.email)));
-            navigate('/dashboard')
+            const response = await authApi.login(validatedData);
+            dispatch(isLoggedIn(response.email));
+            showAuthSuccess.login();
+            navigate('/dashboard');
         } catch (err) {
             if (err instanceof z.ZodError) {
                 const messages = err.issues.map(e => e.message);
-                messages.map(m => toast.error(m));
+                messages.forEach(m => toast.error(m));
+            } else {
+                handleApiError(err);
             }
         }
     }

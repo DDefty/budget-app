@@ -10,6 +10,7 @@ import { useAppDispatch } from '@/app/hooks';
 import { useNavigate } from 'react-router';
 import { isLoggedIn } from '@/features/userSlice';
 import toast, { Toaster } from 'react-hot-toast';
+import { handleApiError, showAuthSuccess } from '@/lib/errorHandler';
 
 
 const signUpSchema = z.object({
@@ -40,12 +41,16 @@ export default function Register() {
         try {
             const validatedData = signUpSchema.parse(data)
 
-            await authApi.register(validatedData).then(data => dispatch(isLoggedIn(data.email)));
-            navigate('/dashboard')
+            const response = await authApi.register(validatedData);
+            dispatch(isLoggedIn(response.email));
+            showAuthSuccess.register();
+            navigate('/dashboard');
         } catch (err) {
             if (err instanceof z.ZodError) {
                 const messages = err.issues.map(e => e.message);
-                messages.map(m => toast.error(m));
+                messages.forEach(m => toast.error(m));
+            } else {
+                handleApiError(err);
             }
         }
     }
