@@ -419,6 +419,8 @@ export default function Dashboard() {
                         <Datepicker
                           inputClassName="w-full bg-background-light text-sm h-10 rounded-lg border-border-light border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:font-semibold"
                           asSingle={true}
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore
                           value={value}
                           onChange={(nv) => setValue(nv ?? { startDate: null, endDate: null })}
                           displayFormat="mm/dd/yyyy"
@@ -466,39 +468,84 @@ export default function Dashboard() {
                 leaveFrom="opacity-100 scale-100 translate-y-0"
                 leaveTo="opacity-0 scale-95 translate-y-4"
               >
-                <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <DialogPanel className="relative transform overflow-visible rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                   <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div className="sm:flex sm:items-start">
-                      <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                        <DialogTitle as="h3" className="text-base font-semibold text-gray-900">
-                          New Transaction
+                      <div className="mt-3 text-center w-full sm:mt-0 mx-14 justify-items-center">
+                        <DialogTitle as="h3" className="text-2xl font-bold text-center text-gray-900">
+                          Add a New Expense
                         </DialogTitle>
                         <div className="mt-2">
                           <p className="text-sm text-gray-500">
-                            What type of transaction would you like to add?
+                            Enter the details of your expense below.
                           </p>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div className="sm:flex sm:items-start gap-4">
-                      <div className="w-1/2 h-36 bg-background-light rounded-lg mr-4 justify-items-center items-center">
-                        <div className="h-36 w-36 text-center hover:cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110" onClick={handleExpenseModalOpen}>
-                          <ChartLineDownSvg className="text-primary w-full h-3/4 mt-2" />
-                          <p>Expense</p>
-                        </div>
+                  <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 ">
+                    <form className="space-y-3" >
+                      <label htmlFor="Datepicker" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
+                        Date
+                      </label>
+                      <div className="space-y-2 focus:border-primary">
+                        <Datepicker
+                          inputClassName="w-full bg-background-light text-sm h-10 rounded-lg border-border-light border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:font-medium placeholder:text-muted-light"
+                          asSingle={true}
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore
+                          value={value}
+                          onChange={(nv) => setValue(nv ?? { startDate: null, endDate: null })}
+                          displayFormat="mm/dd/yyyy"
+                          popoverContainer="body"
+                          popoverDirection="down"
+                          containerClassName="relative"
+                          popoverClassName="z-[9999]"
+                        />
                       </div>
-                    </div>
-                  </div>
-                  <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                    <button
-                      type="button"
-                      onClick={handleCloseModals}
-                      className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"
-                    >
-                      Cancel
-                    </button>
+                      <label htmlFor="amount" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
+                        Amount
+                      </label>
+                      <div className="space-y-2">
+                        <Input
+                          id="amount"
+                          name="amount"
+                          type="number"
+                          placeholder="e.g., 1200"
+                          required
+                          className='w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light placeholder:font-medium dark:placeholder-muted-dark focus:border-primary'
+                        />
+                      </div>
+                      <label htmlFor="category" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
+                        Category
+                      </label>
+                      <div className="space-y-2 ">
+                        <select id="category" className="bg-background-light border px-3 text-muted-light font-medium py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-30 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:border-primary">
+                          <option defaultValue="">Select a category</option>
+                          <option value="US">United States</option>
+                          <option value="CA">Canada</option>
+                          <option value="FR">France</option>
+                          <option value="DE">Germany</option>
+                        </select>
+                      </div>
+                      <label htmlFor="note" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
+                        Notes (Optional)
+                      </label>
+                      <div className="space-y-2 h-36">
+                        <textarea
+                          id="note"
+                          name="note"
+                          placeholder="e.g., Lunch with a client"
+                          required
+                          className="w-full h-32 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light placeholder:font-medium dark:placeholder-muted-dark focus:border-primary align-top p-3"
+                        />
+                      </div>
+                      <div className='mt-6 mb-12'>
+                        <Button type="submit" className="w-full rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary py-2 px-4 text-sm font-semibold">
+                          Add Expense
+                        </Button>
+                      </div>
+                    </form>
                   </div>
                 </DialogPanel>
               </TransitionChild>
