@@ -12,7 +12,7 @@ transaction.get('/transactions', requireAuth, async (req, res) => {
 
     const transactions = await prisma.transaction.findMany({
         where: { userId },
-        select: { id: true, account: true, date: true, description:true, note: true, amount: true, currency: true, category: true }
+        select: { id: true, account: true, date: true, description: true, note: true, amount: true, currency: true, category: true }
     })
 
     res.status(200).json(transactions)
@@ -45,3 +45,20 @@ transaction.post('/transaction/addExpense', requireAuth, async (req, res) => {
 
     res.status(201).json(transaction);
 })
+
+transaction.delete('/transaction/:id', requireAuth, async (req, res) => {
+    const userId = (req as any).userId as string
+    if (!userId) return res.status(401).json({ error: 'Unauthenticated' })
+
+    const id = req.params.id;
+    console.log(id);
+    console.log(typeof id)
+    const transaction = await prisma.transaction.findUnique({ where: { id }, })
+    if (transaction === null) {
+        return res.status(404).json({ error: 'Transasction not found' })
+    } else {
+        await prisma.transaction.delete({ where: { id }, })
+    }
+    res.status(204).json();
+})
+

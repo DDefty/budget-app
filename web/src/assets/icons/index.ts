@@ -6,3 +6,4 @@ export { default as LightbulbSvg } from './lightbulb.svg?react';
 export { default as EditSvg } from './edit.svg?react';
 export { default as ChartLineUpSvg } from './chart-line-up.svg?react'
 export { default as ChartLineDownSvg } from './chart-line-down.svg?react'
+export { default as DeleteSvg } from './delete.svg?react'
