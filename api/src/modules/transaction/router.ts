@@ -12,7 +12,7 @@ transaction.get('/transactions', requireAuth, async (req, res) => {
 
     const transactions = await prisma.transaction.findMany({
         where: { userId },
-        select: { date: true, category: true, amount: true }
+        select: { id: true, account: true, date: true, description:true, note: true, amount: true, currency: true, category: true }
     })
 
     res.status(200).json(transactions)
