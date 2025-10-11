@@ -1,18 +1,64 @@
-import { ChartLineDownSvg, ChartLineUpSvg, EditSvg } from "@/assets/icons";
+import { ChartLineDownSvg, ChartLineUpSvg, DeleteSvg, EditSvg } from "@/assets/icons";
 import { Button } from "@/components/ui/button";
 import Input from "@/components/ui/input";
+import { handleApiError } from "@/lib/errorHandler";
+import { transactionApi, type AddExpenseRequest, type AddIncomeRequest, type TransactionsResponse } from "@/lib/transaction";
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react'
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import Datepicker from "react-tailwindcss-datepicker";
+import { z } from 'zod';
+
+
+const addIncomeSchema = z.object({
+  amount: z.number(),
+  description: z.string().min(4).max(60),
+  date: z.coerce.date().transform(d => d.toISOString())
+})
+
+const addExpenseSchema = z.object({
+  date: z.coerce.date().transform(d => d.toISOString()),
+  description: z.string().min(4).max(60),
+  amount: z.number(),
+  note: z.string().min(4).max(300),
+})
 
 export default function Dashboard() {
   const [newModalOpen, setModalOpen] = useState(false);
   const [incomeModalOpen, setIncomeModalOpen] = useState(false);
   const [expenseModalOpen, setExpenseModalOpen] = useState(false);
+  const [transactions, setTransactions] = useState<TransactionsResponse | []>();
+
   const [value, setValue] = useState({
-    startDate: null as Date | string | null,
-    endDate: null as Date | string | null,
+    startDate: new Date(),
+    endDate: new Date()
   });
+
+
+  const [addIncomeFormData, setAddIncomeFormData] = useState({
+    amount: 0,
+    description: '',
+    date: new Date().toISOString(),
+  })
+
+  const [addExpenseFormData, setAddExpenseFormData] = useState({
+    amount: 0,
+    description: '',
+    date: '',
+    note: ''
+  })
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const transactionsData = await transactionApi.getUserTransactions();
+        setTransactions(transactionsData);
+      } catch (error) {
+        handleApiError(error);
+      }
+    };
+    fetchTransactions();
+  }, [])
 
 
   const handleOpenModal = () => {
@@ -33,10 +79,68 @@ export default function Dashboard() {
     setExpenseModalOpen(false)
     setIncomeModalOpen(false);
     setModalOpen(false);
+    setAddIncomeFormData({ amount: 0, description: '', date: '' });
+    setAddExpenseFormData({ amount: 0, description: '', date: '', note: '' });
   }
+
+  const handleAddIncomeSubmit = async (data: AddIncomeRequest) => {
+    try {
+      const validatedData = addIncomeSchema.parse(data)
+
+      await transactionApi.postIncomeTransaction(validatedData);
+
+      handleCloseModals();
+      const transactionsData = await transactionApi.getUserTransactions();
+      setTransactions(transactionsData);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        const messages = err.issues.map(e => e.message);
+        messages.forEach(m => toast.error(m));
+      } else {
+        handleApiError(err);
+      }
+    }
+  }
+  const handleAddExpenseSubmit = async (data: AddExpenseRequest) => {
+    try {
+      const validatedData = addExpenseSchema.parse(data)
+
+      await transactionApi.postExpenseTransaction(validatedData);
+
+      handleCloseModals();
+      const transactionsData = await transactionApi.getUserTransactions();
+      setTransactions(transactionsData);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        const messages = err.issues.map(e => e.message);
+        messages.forEach(m => toast.error(m));
+      } else {
+        handleApiError(err);
+      }
+    }
+  }
+
+  const handleClick = async (id: string) => {
+    try {
+      await transactionApi.deleteTransaction(id);
+
+      handleCloseModals();
+      const transactionsData = await transactionApi.getUserTransactions();
+      setTransactions(transactionsData);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        const messages = err.issues.map(e => e.message);
+        messages.forEach(m => toast.error(m));
+      } else {
+        handleApiError(err);
+      }
+    }
+  }
+
 
   return (
     <div className="w-3/5 justify-self-center flex flex-col gap-y-4">
+      <Toaster />
       <div className="flex flex-row justify-between">
         <h1 className="text-3xl font-bold">Transactions</h1>
         <Button onClick={handleOpenModal} type="button" className="w-50 h-10 rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary py-2 px-4 text-sm font-semibold ">
@@ -97,180 +201,28 @@ export default function Dashboard() {
               <th className="p-4 text-sm font-semibold text-muted-light dark:text-slate-300">Category</th>
               <th className="p-4 text-sm font-semibold text-muted-light dark:text-slate-300">Account</th>
               <th className="p-4 text-sm font-semibold text-muted-light dark:text-slate-300">Amount</th>
-              <th></th>
+              <th className="p-4 text-sm font-semibold text-muted-light dark:text-slate-300">Edit</th>
+              <th className="p-4 text-sm font-semibold text-muted-light dark:text-slate-300">Delete</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">2023-09-20</td>
-              <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">Grocery Store</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> Groceries </span>
-              </td>
-              <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">Checking Account	</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200 text-red-500">-$75.50</td>
-              <td><EditSvg /></td>
-            </tr>
-            <tr>
-              <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">2023-09-20</td>
-              <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">Grocery Store</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> Groceries </span>
-              </td>
-              <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">Checking Account	</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200 text-green-500">+$2,075.50</td>
-              <td><EditSvg /></td>
-            </tr>
-            <tr>
-              <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">2023-09-20</td>
-              <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">Grocery Store</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> Groceries </span>
-              </td>
-              <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">Checking Account	</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200 text-red-500">-$75.50</td>
-              <td><EditSvg /></td>
-            </tr>
-            <tr>
-              <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">2023-09-20</td>
-              <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">Grocery Store</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> Groceries </span>
-              </td>
-              <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">Checking Account	</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200 text-red-500">-$75.50</td>
-              <td><EditSvg /></td>
-            </tr>
-            <tr>
-              <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">2023-09-20</td>
-              <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">Grocery Store</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> Groceries </span>
-              </td>
-              <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">Checking Account	</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200 text-green-500">+$2,075.50</td>
-              <td><EditSvg /></td>
-            </tr>
-            <tr>
-              <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">2023-09-20</td>
-              <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">Grocery Store</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> Groceries </span>
-              </td>
-              <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">Checking Account	</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200 text-red-500">-$75.50</td>
-              <td><EditSvg /></td>
-            </tr>
-            <tr>
-              <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">2023-09-20</td>
-              <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">Grocery Store</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> Groceries </span>
-              </td>
-              <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">Checking Account	</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200 text-green-500">+$2,075.50</td>
-              <td><EditSvg /></td>
-            </tr>
-            <tr>
-              <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">2023-09-20</td>
-              <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">Grocery Store</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> Groceries </span>
-              </td>
-              <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">Checking Account	</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200 text-red-500">-$75.50</td>
-              <td><EditSvg /></td>
-            </tr>
-            <tr>
-              <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">2023-09-20</td>
-              <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">Grocery Store</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> Groceries </span>
-              </td>
-              <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">Checking Account	</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200 text-green-500">+$2,075.50</td>
-              <td><EditSvg /></td>
-            </tr>
-            <tr>
-              <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">2023-09-20</td>
-              <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">Grocery Store</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> Groceries </span>
-              </td>
-              <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">Checking Account	</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200 text-red-500">-$75.50</td>
-              <td><EditSvg /></td>
-            </tr>
-            <tr>
-              <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">2023-09-20</td>
-              <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">Grocery Store</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> Groceries </span>
-              </td>
-              <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">Checking Account	</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200 text-green-500">+$2,075.50</td>
-              <td><EditSvg /></td>
-            </tr>
-            <tr>
-              <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">2023-09-20</td>
-              <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">Grocery Store</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> Groceries </span>
-              </td>
-              <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">Checking Account	</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200 text-red-500">-$75.50</td>
-              <td><EditSvg /></td>
-            </tr>
-            <tr>
-              <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">2023-09-20</td>
-              <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">Grocery Store</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> Groceries </span>
-              </td>
-              <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">Checking Account	</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200 text-green-500">+$2,075.50</td>
-              <td><EditSvg /></td>
-            </tr>
-            <tr>
-              <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">2023-09-20</td>
-              <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">Grocery Store</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> Groceries </span>
-              </td>
-              <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">Checking Account	</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200 text-red-500">-$75.50</td>
-              <td><EditSvg /></td>
-            </tr>
-            <tr>
-              <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">2023-09-20</td>
-              <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">Grocery Store</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> Groceries </span>
-              </td>
-              <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">Checking Account	</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200 text-green-500">+$2,075.50</td>
-              <td><EditSvg /></td>
-            </tr>
-            <tr>
-              <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">2023-09-20</td>
-              <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">Grocery Store</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> Groceries </span>
-              </td>
-              <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">Checking Account	</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200 text-red-500">-$75.50</td>
-              <td><EditSvg /></td>
-            </tr>
-            <tr>
-              <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">2023-09-20</td>
-              <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">Grocery Store</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200">
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> Groceries </span>
-              </td>
-              <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">Checking Account	</td>
-              <td className="p-4 text-sm foreground-light dark:text-slate-200 text-green-500">+$2,075.50</td>
-              <td><EditSvg /></td>
-            </tr>
+
+            {transactions !== undefined &&
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              transactions.map((t, idx) => (
+                <tr key={idx}>
+                  <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">{t.date.toString().split("T")[0]}</td>
+                  <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">{t.description}</td>
+                  <td className="p-4 text-sm foreground-light dark:text-slate-200">
+                    {t.category.name === 'Income' ? <span className="inline-flex items-center rounded-full bg-green-400/10 px-2.5 py-0.5 text-xs font-medium text-green-600"> {t.category.name} </span> : <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"> {t.category.name} </span>}
+                  </td>
+                  <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">{t.account}	</td>
+                  {t.amount > 0 ? <td className="p-4 text-sm foreground-light dark:text-slate-200 text-green-500">{t.amount}</td> : <td className="p-4 text-sm foreground-light dark:text-slate-200 text-red-500">{t.amount}</td>}
+                  <td className="p-4"><EditSvg /></td>
+                  <td className="p-4"><Button onClick={() => handleClick(t.id)} className="bg-white hover:bg-background-light transition-none disabled:opacity-100"><DeleteSvg className="size-6"/> </Button> </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
@@ -386,7 +338,10 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 ">
-                    <form className="space-y-3" >
+                    <form className="space-y-3" onSubmit={(e) => {
+                      e.preventDefault()
+                      handleAddIncomeSubmit(addIncomeFormData)
+                    }}>
                       <label htmlFor="amount" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
                         Amount
                       </label>
@@ -395,6 +350,8 @@ export default function Dashboard() {
                           id="amount"
                           name="amount"
                           type="number"
+                          value={addIncomeFormData.amount}
+                          onChange={e => setAddIncomeFormData(prev => ({ ...prev, amount: Number(e.target.value) }))}
                           placeholder="e.g., 1200"
                           required
                           className='w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark placeholder:font-semibold focus:border-primary'
@@ -404,12 +361,14 @@ export default function Dashboard() {
                         Source
                       </label>
                       <div className="space-y-2 ">
-                        <select id="source" className="bg-background-light border px-3 text-muted-light py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-30 font-semibold text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:border-primary">
-                          <option defaultValue="">Select a source</option>
-                          <option value="US">United States</option>
-                          <option value="CA">Canada</option>
-                          <option value="FR">France</option>
-                          <option value="DE">Germany</option>
+                        <select id="source" value={addIncomeFormData.description ?? ""} onChange={e => {
+                          console.log("selected:", e.target.value);
+                          setAddIncomeFormData(prev => ({ ...prev, description: e.target.value }));
+                        }} className="bg-background-light border px-3 text-muted-light py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-30 font-semibold text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:border-primary">
+                          <option value="" disabled>Select a source</option>
+                          <option value="Salary">Salary</option>
+                          <option value="Freelance">Freelance</option>
+                          <option value="Other">Other</option>
                         </select>
                       </div>
                       <label htmlFor="Datepicker" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
@@ -422,12 +381,18 @@ export default function Dashboard() {
                           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                           // @ts-ignore
                           value={value}
-                          onChange={(nv) => setValue(nv ?? { startDate: null, endDate: null })}
-                          displayFormat="mm/dd/yyyy"
-                          popoverContainer="body"
+                          onChange={(val) => {
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore
+                            setValue(val);
+                            setAddIncomeFormData(prev => ({
+                              ...prev,
+                              date: val?.startDate ? new Date(val.startDate).toISOString() : ""
+                            }));
+                          }}
+                          displayFormat="YYYY/MM/DD"
                           popoverDirection="down"
                           containerClassName="relative"
-                          popoverClassName="z-[9999]"
                         />
                       </div>
                       <div className='mt-6 mb-12'>
@@ -484,23 +449,32 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 ">
-                    <form className="space-y-3" >
+                    <form className="space-y-3" onSubmit={(e) => {
+                      e.preventDefault()
+                      handleAddExpenseSubmit(addExpenseFormData)
+                    }}>
                       <label htmlFor="Datepicker" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
                         Date
                       </label>
                       <div className="space-y-2 focus:border-primary">
                         <Datepicker
-                          inputClassName="w-full bg-background-light text-sm h-10 rounded-lg border-border-light border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:font-medium placeholder:text-muted-light"
+                          inputClassName="w-full bg-background-light text-sm h-10 rounded-lg border-border-light border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:font-semibold"
                           asSingle={true}
                           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                           // @ts-ignore
                           value={value}
-                          onChange={(nv) => setValue(nv ?? { startDate: null, endDate: null })}
-                          displayFormat="mm/dd/yyyy"
-                          popoverContainer="body"
+                          onChange={(val) => {
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore
+                            setValue(val);
+                            setAddExpenseFormData(prev => ({
+                              ...prev,
+                              date: val?.startDate ? new Date(val.startDate).toISOString() : ""
+                            }));
+                          }}
+                          displayFormat="YYYY/MM/DD"
                           popoverDirection="down"
                           containerClassName="relative"
-                          popoverClassName="z-[9999]"
                         />
                       </div>
                       <label htmlFor="amount" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
@@ -512,20 +486,28 @@ export default function Dashboard() {
                           name="amount"
                           type="number"
                           placeholder="e.g., 1200"
+                          value={addExpenseFormData.amount}
+                          onChange={e => setAddExpenseFormData(prev => ({ ...prev, amount: Number(e.target.value) }))}
                           required
                           className='w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light placeholder:font-medium dark:placeholder-muted-dark focus:border-primary'
                         />
                       </div>
-                      <label htmlFor="category" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
+                      <label htmlFor="description" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
                         Category
                       </label>
                       <div className="space-y-2 ">
-                        <select id="category" className="bg-background-light border px-3 text-muted-light font-medium py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-30 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:border-primary">
-                          <option defaultValue="">Select a category</option>
-                          <option value="US">United States</option>
-                          <option value="CA">Canada</option>
-                          <option value="FR">France</option>
-                          <option value="DE">Germany</option>
+                        <select id="description" value={addExpenseFormData.description} onChange={e => setAddExpenseFormData(prev => ({ ...prev, description: e.target.value }))} className="bg-background-light border px-3 text-muted-light font-medium py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-30 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:border-primary">
+                          <option value="" disabled>Select a category</option>
+                          <option value="Groceries">Groceries</option>
+                          <option value="Transportation">Transportation</option>
+                          <option value="Entertainment">Entertainment</option>
+                          <option value="Utilities">Utilities</option>
+                          <option value="Healthcare">Healthcare</option>
+                          <option value="Education">Education</option>
+                          <option value="Subscriptions">Subscriptions</option>
+                          <option value="Dining Out">Dining Out</option>
+                          <option value="Shopping">Shopping</option>
+                          <option value="Other">Other</option>
                         </select>
                       </div>
                       <label htmlFor="note" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
@@ -536,6 +518,8 @@ export default function Dashboard() {
                           id="note"
                           name="note"
                           placeholder="e.g., Lunch with a client"
+                          value={addExpenseFormData.note}
+                          onChange={e => setAddExpenseFormData(prev => ({ ...prev, note: e.target.value }))}
                           required
                           className="w-full h-32 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light placeholder:font-medium dark:placeholder-muted-dark focus:border-primary align-top p-3"
                         />
