@@ -1,0 +1,39 @@
+import { type Transaction } from "@/lib/transaction";
+import { TransactionRow } from "./TransactionRow";
+import Loader from "../common/Loader";
+
+type TransactionsTableProps = {
+    transactions: Transaction[];
+    handleClick(id: string): void;
+    loading: boolean;
+}
+
+export const TransactionsTable: React.FC<TransactionsTableProps> = ({ transactions, handleClick, loading }) => {
+    return (
+        <div className="overflow-x-auto rounded-xl">
+            {loading ? <Loader /> :
+                <table className="w-full text-left bg-white rounded-lg border border-gray-200">
+                    <thead>
+                        <tr className="border-b bg-background-light border-background-light dark:border-background-dark">
+                            <th className="p-4 text-sm font-semibold text-muted-light">Date</th>
+                            <th className="p-4 text-sm font-semibold text-muted-light dark:text-slate-300">Description</th>
+                            <th className="p-4 text-sm font-semibold text-muted-light dark:text-slate-300">Category</th>
+                            <th className="p-4 text-sm font-semibold text-muted-light dark:text-slate-300">Account</th>
+                            <th className="p-4 text-sm font-semibold text-muted-light dark:text-slate-300">Amount</th>
+                            <th className="p-4 text-sm font-semibold text-muted-light dark:text-slate-300"></th>
+                            <th className="p-4 text-sm font-semibold text-muted-light dark:text-slate-300"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {transactions !== undefined &&
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore
+                            transactions.map((t, idx) => (
+                                <TransactionRow transaction={t} handleClick={handleClick} index={idx} />
+                            ))}
+                    </tbody>
+                </table>
+            }
+        </div>
+    );
+}
