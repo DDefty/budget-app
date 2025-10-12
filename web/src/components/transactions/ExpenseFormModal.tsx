@@ -5,6 +5,17 @@ import { useState } from 'react'
 import Datepicker from "react-tailwindcss-datepicker";
 import { Button } from '../ui/button';
 import type { AddExpenseRequest } from '@/lib/transaction';
+import { z } from "zod";
+import toast from 'react-hot-toast';
+
+const addExpenseSchema = z.object({
+    amount: z.number().min(0.01, "Amount must be greater than 0"),
+    description: z.string().min(1, "Description is required"),
+    date: z.string().min(1, "Date is required"),
+    category: z.string().min(1, "Category is required"),
+    account: z.string().min(1, "Account is required"),
+    note: z.string().optional(),
+});
 
 
 type ExpenseFormModalProps = {
@@ -20,6 +31,8 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModal
         amount: 0,
         description: '',
         date: '',
+        category: '',
+        account: '',
         note: ''
     })
 
@@ -66,7 +79,12 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModal
                                 </div>
                                 <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 ">
                                     <form className="space-y-3" onSubmit={(e) => {
-                                        e.preventDefault()
+                                        e.preventDefault();
+                                        const result = addExpenseSchema.safeParse(addExpenseFormData);
+                                        if (!result.success) {
+                                            result.error.issues.forEach(i => toast.error(i.message));
+                                            return;
+                                        }
                                         handleAddExpenseSubmit(addExpenseFormData)
                                     }}>
                                         <label htmlFor="Datepicker" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
@@ -109,21 +127,44 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModal
                                             />
                                         </div>
                                         <label htmlFor="description" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
+                                            Description
+                                        </label>
+                                        <div className="space-y-2 ">
+                                            <Input
+                                                id="description"
+                                                name="description"
+                                                type="string"
+                                                value={addExpenseFormData.description}
+                                                onChange={e => setAddExpenseFormData(prev => ({ ...prev, description: e.target.value }))}
+                                                placeholder="Enter expense description..."
+                                                required
+                                                className='w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark placeholder:font-semibold focus:border-primary'
+                                            />
+                                        </div>
+                                        <label htmlFor="Category" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
                                             Category
                                         </label>
                                         <div className="space-y-2 ">
-                                            <select id="description" value={addExpenseFormData.description} onChange={e => setAddExpenseFormData(prev => ({ ...prev, description: e.target.value }))} className="bg-background-light border px-3 text-muted-light font-medium py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-30 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:border-primary">
+                                            <select id="Category" value={addExpenseFormData.category ?? ""} onChange={e => {
+                                                setAddExpenseFormData(prev => ({ ...prev, category: e.target.value }));
+                                            }} className="bg-background-light border px-3 text-muted-light py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-30 font-semibold text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:border-primary">
                                                 <option value="" disabled>Select a category</option>
-                                                <option value="Groceries">Groceries</option>
-                                                <option value="Transportation">Transportation</option>
-                                                <option value="Entertainment">Entertainment</option>
-                                                <option value="Utilities">Utilities</option>
-                                                <option value="Healthcare">Healthcare</option>
-                                                <option value="Education">Education</option>
-                                                <option value="Subscriptions">Subscriptions</option>
-                                                <option value="Dining Out">Dining Out</option>
-                                                <option value="Shopping">Shopping</option>
-                                                <option value="Other">Other</option>
+                                                <option value="Category 1">Category 1</option>
+                                                <option value="Category 2">Category 2</option>
+                                                <option value="Category 3">Category 3</option>
+                                            </select>
+                                        </div>
+                                        <label htmlFor="Account" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
+                                            Account
+                                        </label>
+                                        <div className="space-y-2 ">
+                                            <select id="Account" value={addExpenseFormData.account ?? ""} onChange={e => {
+                                                setAddExpenseFormData(prev => ({ ...prev, account: e.target.value }));
+                                            }} className="bg-background-light border px-3 text-muted-light py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-30 font-semibold text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:border-primary">
+                                                <option value="" disabled>Select an account</option>
+                                                <option value="Account 1">Account 1</option>
+                                                <option value="Account 2">Account 2</option>
+                                                <option value="Account 3">Account 3</option>
                                             </select>
                                         </div>
                                         <label htmlFor="note" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
@@ -137,7 +178,7 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModal
                                                 value={addExpenseFormData.note}
                                                 onChange={e => setAddExpenseFormData(prev => ({ ...prev, note: e.target.value }))}
                                                 required
-                                                className="w-full h-32 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light placeholder:font-medium dark:placeholder-muted-dark focus:border-primary align-top p-3"
+                                                className="w-full h-32 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light placeholder:font-medium placeholder:text-sm dark:placeholder-muted-dark focus:border-primary align-top p-3"
                                             />
                                         </div>
                                         <div className='mt-6 mb-12'>
