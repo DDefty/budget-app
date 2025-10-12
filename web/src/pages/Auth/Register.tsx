@@ -42,7 +42,7 @@ export default function Register() {
             const validatedData = signUpSchema.parse(data)
 
             const response = await authApi.register(validatedData);
-            dispatch(isLoggedIn(response.email));
+            dispatch(isLoggedIn(response));
             showAuthSuccess.register();
             navigate('/dashboard');
         } catch (err) {
