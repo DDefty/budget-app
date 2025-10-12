@@ -36,7 +36,7 @@ export default function Login() {
             const validatedData = signInSchema.parse(data)
 
             const response = await authApi.login(validatedData);
-            dispatch(isLoggedIn(response.email));
+            dispatch(isLoggedIn(response));
             showAuthSuccess.login();
             navigate('/dashboard');
         } catch (err) {
