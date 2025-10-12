@@ -19,7 +19,9 @@ export interface User {
 }
 
 export interface AuthResponse {
-  email: string
+  id: string;
+  email: string;
+  name: string;
 }
 
 // Auth API functions
