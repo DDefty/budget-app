@@ -3,6 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 type UserState = {
   status: 'loggedOut' | 'loggedIn';
   email?: string;
+  name?: string;
+  id?: string;
   error?: string;
 };
 
@@ -16,12 +18,14 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     isLoggedIn(state, action) {
-        state.email = action.payload;
-        state.status = 'loggedIn';
+      state.email = action.payload.email;
+      state.id = action.payload.id;
+      state.name = action.payload.name;
+      state.status = 'loggedIn';
     },
     isLoggedOut(state) {
-        state.email = undefined;
-        state.status = 'loggedOut';
+      state.email = undefined;
+      state.status = 'loggedOut';
     },
   },
 });

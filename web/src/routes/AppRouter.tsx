@@ -24,25 +24,19 @@ export default function AppRouter() {
         <Route
           path="/"
           element={
-            <PrivateRoute>
               <AppLayout><Dashboard/></AppLayout>
-            </PrivateRoute>
           }
         />
         <Route
           path="/dashboard"
           element={
-            <PrivateRoute>
               <AppLayout><Dashboard/></AppLayout>
-            </PrivateRoute>
           }
         />
         <Route
           path="/transactions"
           element={
-            <PrivateRoute>
               <AppLayout><Transactions/></AppLayout>
-            </PrivateRoute>
           }
         />
         <Route

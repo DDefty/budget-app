@@ -4,7 +4,6 @@ import { prisma } from '../../lib/prisma'
 import { registerSchema, loginSchema } from './schemas'
 import { signJwt, verifyJwt } from '../../lib/jwt'
 import { env } from '../../lib/env'
-import { requireAuth } from '../../middleware/requireAuth'
 
 export const auth = Router()
 
@@ -67,8 +66,4 @@ auth.get('/me', async (req, res) => {
   const user = await prisma.user.findUnique({ where: { id: payload.uid }, select: { id: true, name: true, email: true, createdAt: true } })
   if (!user) return res.status(401).json({ error: 'User not found' })
   res.json(user)
-})
-
-auth.get('/protected-example', requireAuth, async (req, res) => {
-  res.json({ ok: true, userId: req.user!.id })
 })
