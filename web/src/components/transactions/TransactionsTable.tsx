@@ -26,8 +26,6 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({ transactio
                     </thead>
                     <tbody>
                         {transactions !== undefined &&
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-ignore
                             transactions.map((t, idx) => (
                                 <TransactionRow transaction={t} handleClick={handleClick} index={idx} />
                             ))}

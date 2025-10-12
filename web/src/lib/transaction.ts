@@ -3,6 +3,7 @@ import { api } from './api';
 export type AddIncomeRequest = {
     amount: number;
     description: string;
+    account: string;
     date: string;
 }
 
@@ -10,6 +11,8 @@ export type AddExpenseRequest = {
     amount: number;
     description: string;
     date: string;
+    category: string;
+    account: string;
     note: string;
 }
 
