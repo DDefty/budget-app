@@ -94,8 +94,6 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModal
                                             <Datepicker
                                                 inputClassName="w-full bg-background-light text-sm h-10 rounded-lg border-border-light border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:font-semibold"
                                                 asSingle={true}
-                                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                                // @ts-ignore
                                                 value={value}
                                                 onChange={(val) => {
                                                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
