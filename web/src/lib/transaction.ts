@@ -72,7 +72,7 @@ export const transactionApi = {
 
   // Edit Income Transaction
   editExpenseTransaction: async (transactionData: AddExpenseRequest, id: string): Promise<Transaction> => {
-    const response = await api.put(`/transaction/editExpnese/${id}`, transactionData);
+    const response = await api.put(`/transaction/editExpense/${id}`, transactionData);
     return response.data;
   },
 };

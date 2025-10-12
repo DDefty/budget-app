@@ -91,7 +91,7 @@ export default function Dashboard() {
   const handleEditExpenseSubmit = async (data: AddExpenseRequest, id: string) => {
     try {
       await editExpenseTransaction(data, id);
-      incomeModal.closeModal();
+      expenseModal.closeModal();
     } catch (err) {
       if (err instanceof z.ZodError) {
         err.issues.forEach(i => toast.error(i.message));

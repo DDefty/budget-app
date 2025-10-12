@@ -95,15 +95,17 @@ export const IncomeFormModal: React.FC<IncomeFormModalProps> = ({ incomeModalOpe
                                 <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 ">
                                     <form className="space-y-3" onSubmit={(e) => {
                                         e.preventDefault();
-                                        const result = addIncomeSchema.safeParse(addIncomeFormData);
+                                        const data = { ...addIncomeFormData, amount: Number(addIncomeFormData.amount), date: new Date(value.startDate).toISOString() };
+                                        const result = addIncomeSchema.safeParse(data);
                                         if (!result.success) {
                                             result.error.issues.forEach(i => toast.error(i.message));
                                             return;
                                         }
                                         if (isEdit) {
-                                            handleEditIncomeSubmit(addIncomeFormData, transactionId);
+                                            handleEditIncomeSubmit(data, transactionId);
+                                        } else {
+                                            handleAddIncomeSubmit(data)
                                         }
-                                        handleAddIncomeSubmit(addIncomeFormData)
                                     }}>
                                         <label htmlFor="amount" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
                                             Amount
@@ -113,7 +115,7 @@ export const IncomeFormModal: React.FC<IncomeFormModalProps> = ({ incomeModalOpe
                                                 id="amount"
                                                 name="amount"
                                                 type="number"
-                                                value={addIncomeFormData.amount}
+                                                value={Number(addIncomeFormData.amount)}
                                                 onChange={e => setAddIncomeFormData(prev => ({ ...prev, amount: Number(e.target.value) }))}
                                                 placeholder="e.g., 1200"
                                                 required
