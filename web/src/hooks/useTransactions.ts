@@ -51,9 +51,29 @@ export function useTransactions() {
     }
   }, [fetchTransactions]);
 
+  const editIncomeTransaction = useCallback(async (payload:AddIncomeRequest, id: string) => {
+    try {
+      await transactionApi.editIncomeTransaction(payload, id);
+      await fetchTransactions();
+    } catch (err) {
+      handleApiError(err);
+      throw err;
+    }
+  }, [fetchTransactions]);
+
+  const editExpenseTransaction = useCallback(async (payload:AddExpenseRequest, id: string) => {
+    try {
+      await transactionApi.editExpenseTransaction(payload, id);
+      await fetchTransactions();
+    } catch (err) {
+      handleApiError(err);
+      throw err;
+    }
+  }, [fetchTransactions]);
+
   useEffect(() => {
     void fetchTransactions();
   }, [fetchTransactions]);
 
-  return { transactions, loading, fetchTransactions, addIncome, addExpense, deleteTransaction, setTransactions };
+  return { transactions, loading, fetchTransactions, addIncome, addExpense, deleteTransaction, setTransactions, editIncomeTransaction, editExpenseTransaction };
 }

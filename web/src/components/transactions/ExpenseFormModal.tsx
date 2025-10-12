@@ -1,7 +1,7 @@
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react'
 import { Fragment } from 'react/jsx-runtime'
 import Input from '../ui/input'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Datepicker from "react-tailwindcss-datepicker";
 import { Button } from '../ui/button';
 import type { AddExpenseRequest } from '@/lib/transaction';
@@ -22,11 +22,22 @@ type ExpenseFormModalProps = {
     expenseModalOpen: boolean;
     handleCloseModals: () => void;
     handleAddExpenseSubmit: (data: AddExpenseRequest) => void;
+    handleEditExpenseSubmit: (data: AddExpenseRequest, id:string) => void; 
     value: { startDate: Date; endDate: Date };
     setValue: React.Dispatch<React.SetStateAction<{ startDate: Date; endDate: Date }>>;
+    editTransactionState?: {
+        id: string;
+        amount: number;
+        description: string;
+        account: string;
+        category: string;
+        date: string;
+        note: string;
+    }
+    isEdit: boolean;
 }
 
-export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModalOpen, handleCloseModals, handleAddExpenseSubmit, value, setValue }) => {
+export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModalOpen, handleCloseModals, handleAddExpenseSubmit, handleEditExpenseSubmit, value, setValue, editTransactionState, isEdit }) => {
     const [addExpenseFormData, setAddExpenseFormData] = useState({
         amount: 0,
         description: '',
@@ -35,6 +46,17 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModal
         account: '',
         note: ''
     })
+
+    const [transactionId, setTransactionId] = useState('');
+
+    useEffect(() => {
+        if (editTransactionState !== undefined) {
+            setAddExpenseFormData(editTransactionState)
+            setTransactionId(editTransactionState.id);
+        }
+    }, [editTransactionState])
+
+
 
     return (
         <Transition as={Fragment} show={expenseModalOpen} appear>
@@ -84,6 +106,9 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModal
                                         if (!result.success) {
                                             result.error.issues.forEach(i => toast.error(i.message));
                                             return;
+                                        }
+                                        if (isEdit) {
+                                            handleEditExpenseSubmit(addExpenseFormData, transactionId);
                                         }
                                         handleAddExpenseSubmit(addExpenseFormData)
                                     }}>
@@ -181,7 +206,7 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModal
                                         </div>
                                         <div className='mt-6 mb-12'>
                                             <Button type="submit" className="w-full rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary py-2 px-4 text-sm font-semibold">
-                                                Add Expense
+                                                {isEdit ? 'Edit Expense' : 'Add Expense'}
                                             </Button>
                                         </div>
                                     </form>

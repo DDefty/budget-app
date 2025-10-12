@@ -5,12 +5,12 @@ import { Button } from "../ui/button";
 type TransactionRowProps = {
     transaction: Transaction;
     handleClick(id: string): void;
-    index: number;
+    handleClickEdit(transaction: Transaction): void;
 }
 
-export const TransactionRow: React.FC<TransactionRowProps> = ({ transaction, handleClick, index }) => {
+export const TransactionRow: React.FC<TransactionRowProps> = ({ transaction, handleClick, handleClickEdit }) => {
     return (
-        <tr key={index}>
+        <tr key={transaction.id}>
             <td className="p-4 text-sm text-muted-light foreground-light dark:text-slate-200">{transaction.date.toString().split("T")[0]}</td>
             <td className="p-4 text-sm font-semibold foreground-light text-foreground-light dark:text-slate-200">{transaction.description}</td>
             <td className="p-4 text-sm foreground-light dark:text-slate-200">
@@ -18,7 +18,7 @@ export const TransactionRow: React.FC<TransactionRowProps> = ({ transaction, han
             </td>
             <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">{transaction.account}	</td>
             {transaction.amount > 0 ? <td className="p-4 text-sm foreground-light dark:text-slate-200 text-green-500">{transaction.amount}</td> : <td className="p-4 text-sm foreground-light dark:text-slate-200 text-red-500">{transaction.amount}</td>}
-            <td className="p-4"><EditSvg /></td>
+            <td className="p-4"><Button onClick={() => handleClickEdit(transaction)} className="bg-white hover:bg-background-light transition-none disabled:opacity-100"><EditSvg /></Button></td>
             <td className="p-4"><Button onClick={() => handleClick(transaction.id)} className="bg-white hover:bg-background-light transition-none disabled:opacity-100"><DeleteSvg className="size-6 bg-white hover:bg-background-light transition-none disabled:opacity-100" /> </Button> </td>
         </tr>
     );

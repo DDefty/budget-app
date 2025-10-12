@@ -9,7 +9,7 @@ import { z } from "zod";
 
 import { useModal } from "@/hooks/useModal";
 import { useTransactions } from "@/hooks/useTransactions";
-import type { AddExpenseRequest, AddIncomeRequest } from "@/lib/transaction";
+import type { AddExpenseRequest, AddIncomeRequest, Transaction } from "@/lib/transaction";
 import { useState } from "react";
 
 export default function Dashboard() {
@@ -20,7 +20,26 @@ export default function Dashboard() {
     startDate: new Date(),
     endDate: new Date()
   });
-  const { transactions, loading, addIncome, addExpense, deleteTransaction } = useTransactions();
+  const [isEdit, setIsEdit] = useState(false);
+  const { transactions, loading, addIncome, addExpense, deleteTransaction, editIncomeTransaction, editExpenseTransaction } = useTransactions();
+
+  const [editIncomeValues, setEditIncomeValues] = useState({
+    id: '',
+    amount: 0,
+    description: '',
+    account: '',
+    date: ''
+  });
+
+  const [editExpenseValues, setEditExpenseValues] = useState({
+    id: '',
+    amount: 0,
+    description: '',
+    account: '',
+    category: '',
+    date: '',
+    note: '',
+  });
 
   const handleAddIncomeSubmit = async (data: AddIncomeRequest) => {
     try {
@@ -37,6 +56,42 @@ export default function Dashboard() {
     try {
       await addExpense(data);
       expenseModal.closeModal();
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        err.issues.forEach(i => toast.error(i.message));
+      }
+    }
+  };
+
+  const handleClickEdit = (transaction: Transaction) => {
+    if (transaction.category.kind === 'INCOME') {
+      setEditIncomeValues({ id: transaction.id, amount: transaction.amount, description: transaction.description, account: transaction.account, date: transaction.date });
+      setValue({startDate: new Date(transaction.date), endDate: new Date(transaction.date)})
+      setIsEdit(true);
+      incomeModal.openModal()
+    } else if (transaction.category.kind === 'EXPENSE') {
+      setEditExpenseValues({ id: transaction.id, amount: transaction.amount, description: transaction.description, account: transaction.account, date: transaction.date, category: transaction.category.name, note: transaction.note });
+      setValue({startDate: new Date(transaction.date), endDate: new Date(transaction.date)})
+      setIsEdit(true);
+      expenseModal.openModal()
+    }
+  }
+
+  const handleEditIncomeSubmit = async (data: AddIncomeRequest, id: string) => {
+    try {
+      await editIncomeTransaction(data, id);
+      incomeModal.closeModal();
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        err.issues.forEach(i => toast.error(i.message));
+      }
+    }
+  };
+
+  const handleEditExpenseSubmit = async (data: AddExpenseRequest, id: string) => {
+    try {
+      await editExpenseTransaction(data, id);
+      incomeModal.closeModal();
     } catch (err) {
       if (err instanceof z.ZodError) {
         err.issues.forEach(i => toast.error(i.message));
@@ -63,29 +118,35 @@ export default function Dashboard() {
       </div>
 
       <TransactionsFilters />
-      <TransactionsTable transactions={Array.isArray(transactions) ? transactions : []} handleClick={handleClickDelete} loading={loading}/>
+      <TransactionsTable transactions={Array.isArray(transactions) ? transactions : []} handleClick={handleClickDelete} handleClickEdit={handleClickEdit} loading={loading} />
 
       <NewTransactionModal
         newModalOpen={newModal.open}
         handleCloseModals={() => { newModal.closeModal(); incomeModal.closeModal(); expenseModal.closeModal(); }}
-        handleIncomeModalOpen={() => { newModal.closeModal(); incomeModal.openModal(); }}
-        handleExpenseModalOpen={() => { newModal.closeModal(); expenseModal.openModal(); }}
+        handleIncomeModalOpen={() => { newModal.closeModal(); incomeModal.openModal(); setEditIncomeValues({ id: '', amount: 0, description: '', account: '', date: '' }); setValue({startDate: new Date(), endDate: new Date()}); setIsEdit(false)}}
+        handleExpenseModalOpen={() => { newModal.closeModal(); expenseModal.openModal(); setEditExpenseValues({ id: '', amount: 0, description: '', account: '', date: '', category: '', note: '' }); setValue({startDate: new Date(), endDate: new Date()}); setIsEdit(false)}}
       />
 
       <IncomeFormModal
         incomeModalOpen={incomeModal.open}
         handleCloseModals={() => incomeModal.closeModal()}
         handleAddIncomeSubmit={handleAddIncomeSubmit}
+        handleEditIncomeSubmit={handleEditIncomeSubmit}
         value={value}
         setValue={setValue}
+        editTransactionState={editIncomeValues}
+        isEdit={isEdit}
       />
 
       <ExpenseFormModal
         expenseModalOpen={expenseModal.open}
         handleCloseModals={() => expenseModal.closeModal()}
         handleAddExpenseSubmit={handleAddExpenseSubmit}
+        handleEditExpenseSubmit={handleEditExpenseSubmit}
         value={value}
         setValue={setValue}
+        editTransactionState={editExpenseValues}
+        isEdit={isEdit}
       />
     </div>
   );

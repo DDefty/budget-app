@@ -5,7 +5,7 @@ import { useAppSelector } from "@/app/hooks";
 
 export default function Topbar() {
   const location = useLocation();
-  const {name} = useAppSelector(u => u.user);
+  const { name } = useAppSelector(u => u.user);
 
   return (
     <header className="p-4 mb-2 bg-white">

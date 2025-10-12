@@ -5,10 +5,11 @@ import Loader from "../common/Loader";
 type TransactionsTableProps = {
     transactions: Transaction[];
     handleClick(id: string): void;
+    handleClickEdit(transaction: Transaction): void;
     loading: boolean;
 }
 
-export const TransactionsTable: React.FC<TransactionsTableProps> = ({ transactions, handleClick, loading }) => {
+export const TransactionsTable: React.FC<TransactionsTableProps> = ({ transactions, handleClick, handleClickEdit, loading }) => {
     return (
         <div className="overflow-x-auto rounded-xl">
             {loading ? <Loader /> :
@@ -26,8 +27,8 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({ transactio
                     </thead>
                     <tbody>
                         {transactions !== undefined &&
-                            transactions.map((t, idx) => (
-                                <TransactionRow transaction={t} handleClick={handleClick} index={idx} />
+                            transactions.map((t) => (
+                                <TransactionRow transaction={t} handleClick={handleClick} handleClickEdit={handleClickEdit} />
                             ))}
                     </tbody>
                 </table>

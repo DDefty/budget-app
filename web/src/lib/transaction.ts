@@ -63,6 +63,18 @@ export const transactionApi = {
     const response = await api.delete(`/transaction/${id}`);
     return response.data;
   },
+
+  // Edit Income Transaction
+  editIncomeTransaction: async (transactionData: AddIncomeRequest, id: string): Promise<Transaction> => {
+    const response = await api.put(`/transaction/editIncome/${id}`, transactionData);
+    return response.data;
+  },
+
+  // Edit Income Transaction
+  editExpenseTransaction: async (transactionData: AddExpenseRequest, id: string): Promise<Transaction> => {
+    const response = await api.put(`/transaction/editExpnese/${id}`, transactionData);
+    return response.data;
+  },
 };
 
 export default transactionApi;

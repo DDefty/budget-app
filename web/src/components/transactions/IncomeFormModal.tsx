@@ -1,7 +1,7 @@
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react'
 import { Fragment } from 'react/jsx-runtime'
 import Input from '../ui/input'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Datepicker from "react-tailwindcss-datepicker";
 import { Button } from '../ui/button';
 import type { AddIncomeRequest } from '@/lib/transaction';
@@ -9,22 +9,31 @@ import { z } from "zod";
 import toast from "react-hot-toast";
 
 const addIncomeSchema = z.object({
-  amount: z.number().min(0.01, "Amount must be greater than 0"),
-  description: z.string().min(1, "Description is required"),
-  account: z.string().min(1, "Account is required"),
-  date: z.string().min(1, "Date is required"),
+    amount: z.number().min(0.01, "Amount must be greater than 0"),
+    description: z.string().min(1, "Description is required"),
+    account: z.string().min(1, "Account is required"),
+    date: z.string().min(1, "Date is required"),
 });
 
 type IncomeFormModalProps = {
     incomeModalOpen: boolean;
     handleCloseModals: () => void;
     handleAddIncomeSubmit: (data: AddIncomeRequest) => void;
+    handleEditIncomeSubmit: (data: AddIncomeRequest, id: string) => void;
     value: { startDate: Date; endDate: Date };
     setValue: React.Dispatch<React.SetStateAction<{ startDate: Date; endDate: Date }>>;
+    editTransactionState?: {
+        id: string,
+        amount: number,
+        description: string,
+        account: string,
+        date: string
+    }
+    isEdit: boolean;
 }
 
 
-export const IncomeFormModal: React.FC<IncomeFormModalProps> = ({ incomeModalOpen, handleCloseModals, handleAddIncomeSubmit, value, setValue }) => {
+export const IncomeFormModal: React.FC<IncomeFormModalProps> = ({ incomeModalOpen, handleCloseModals, handleAddIncomeSubmit, handleEditIncomeSubmit, value, setValue, editTransactionState, isEdit }) => {
 
     const [addIncomeFormData, setAddIncomeFormData] = useState({
         amount: 0,
@@ -32,6 +41,15 @@ export const IncomeFormModal: React.FC<IncomeFormModalProps> = ({ incomeModalOpe
         account: '',
         date: new Date().toISOString(),
     })
+
+    const [ transactionId, setTransactionId] = useState('');
+
+    useEffect(() => {
+        if(editTransactionState) {
+            setAddIncomeFormData(editTransactionState)
+            setTransactionId(editTransactionState.id);
+        }
+    }, [editTransactionState])
 
     return (
         <Transition as={Fragment} show={incomeModalOpen} appear>
@@ -82,6 +100,9 @@ export const IncomeFormModal: React.FC<IncomeFormModalProps> = ({ incomeModalOpe
                                             result.error.issues.forEach(i => toast.error(i.message));
                                             return;
                                         }
+                                        if (isEdit) {
+                                            handleEditIncomeSubmit(addIncomeFormData, transactionId);
+                                        }
                                         handleAddIncomeSubmit(addIncomeFormData)
                                     }}>
                                         <label htmlFor="amount" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
@@ -108,7 +129,7 @@ export const IncomeFormModal: React.FC<IncomeFormModalProps> = ({ incomeModalOpe
                                                 name="source"
                                                 type="string"
                                                 value={addIncomeFormData.description}
-                                                onChange={e => setAddIncomeFormData(prev => ({ ...prev, description: e.target.value}))}
+                                                onChange={e => setAddIncomeFormData(prev => ({ ...prev, description: e.target.value }))}
                                                 placeholder="Enter income description..."
                                                 required
                                                 className='w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark placeholder:font-medium focus:border-primary'
@@ -151,7 +172,7 @@ export const IncomeFormModal: React.FC<IncomeFormModalProps> = ({ incomeModalOpe
                                         </div>
                                         <div className='mt-6 mb-12'>
                                             <Button type="submit" className="w-full rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary py-2 px-4 text-sm font-semibold">
-                                                Add Income
+                                                {isEdit ? 'Edit Income' : 'Add Income'}
                                             </Button>
                                         </div>
                                     </form>
