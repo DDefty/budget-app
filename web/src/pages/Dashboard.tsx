@@ -1,9 +1,11 @@
 import { LightbulbSvg } from "@/assets/icons";
+import { Toaster } from "react-hot-toast";
 import { NavLink } from "react-router-dom";
 
 export default function Dashboard() {
   return (
     <div>
+      <Toaster />
       <h1 className="text-3xl font-bold">Dashboard Overview</h1>
       <div className="mx-10">
         <div className="flex mt-16 justify-between mb-16 gap-x-6">

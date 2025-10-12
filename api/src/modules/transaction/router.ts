@@ -51,8 +51,6 @@ transaction.delete('/transaction/:id', requireAuth, async (req, res) => {
     if (!userId) return res.status(401).json({ error: 'Unauthenticated' })
 
     const id = req.params.id;
-    console.log(id);
-    console.log(typeof id)
     const transaction = await prisma.transaction.findUnique({ where: { id }, })
     if (transaction === null) {
         return res.status(404).json({ error: 'Transasction not found' })
@@ -62,3 +60,50 @@ transaction.delete('/transaction/:id', requireAuth, async (req, res) => {
     res.status(204).json();
 })
 
+transaction.put('/transaction/editIncome/:id', requireAuth, async (req, res) => {
+    const userId = (req as any).userId as string
+    if (!userId) return res.status(401).json({ error: 'Unauthenticated' })
+
+    const parse = addIncomeSchema.safeParse(req.body)
+    if (!parse.success) return res.status(400).json({ error: 'Invalid payload', issues: parse.error.issues })
+
+    const id = req.params.id;
+    if (!id) {
+        return res.status(400).json({ error: 'Provide transaction ID' })
+    }
+
+    const transaction = await prisma.transaction.findUnique({ where: { id }, })
+    const { amount, description, account, date } = parse.data
+    if (transaction === null) {
+        return res.status(404).json({ error: 'Transasction not found' })
+    } else {
+        await prisma.transaction.update({ where: { id }, data: {amount, description, account, date}})
+    }
+
+
+    res.status(200).json(transaction);
+})
+
+transaction.put('/transaction/editExpense/:id', requireAuth, async (req, res) => {
+    const userId = (req as any).userId as string
+    if (!userId) return res.status(401).json({ error: 'Unauthenticated' })
+
+    const parse = addExpenseSchema.safeParse(req.body)
+    if (!parse.success) return res.status(400).json({ error: 'Invalid payload', issues: parse.error.issues })
+
+    const id = req.params.id;
+    if (!id) {
+        return res.status(400).json({ error: 'Provide transaction ID' })
+    }
+
+    const transaction = await prisma.transaction.findUnique({ where: { id }, })
+    const { amount, description, account, date, note } = parse.data
+    if (transaction === null) {
+        return res.status(404).json({ error: 'Transasction not found' })
+    } else {
+        await prisma.transaction.update({ where: { id }, data: {amount, description, account, date, note}})
+    }
+
+
+    res.status(200).json(transaction);
+})

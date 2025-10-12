@@ -102,15 +102,17 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModal
                                 <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 ">
                                     <form className="space-y-3" onSubmit={(e) => {
                                         e.preventDefault();
-                                        const result = addExpenseSchema.safeParse(addExpenseFormData);
+                                        const data = { ...addExpenseFormData, amount: Number(addExpenseFormData.amount), date: value.startDate.toISOString() };
+                                        const result = addExpenseSchema.safeParse(data);
                                         if (!result.success) {
                                             result.error.issues.forEach(i => toast.error(i.message));
                                             return;
                                         }
                                         if (isEdit) {
-                                            handleEditExpenseSubmit(addExpenseFormData, transactionId);
+                                            handleEditExpenseSubmit(data, transactionId);
+                                        } else {
+                                            handleAddExpenseSubmit(data)
                                         }
-                                        handleAddExpenseSubmit(addExpenseFormData)
                                     }}>
                                         <label htmlFor="Datepicker" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
                                             Date
@@ -143,7 +145,7 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModal
                                                 name="amount"
                                                 type="number"
                                                 placeholder="e.g., 1200"
-                                                value={addExpenseFormData.amount}
+                                                value={Number(addExpenseFormData.amount)}
                                                 onChange={e => setAddExpenseFormData(prev => ({ ...prev, amount: Number(e.target.value) }))}
                                                 required
                                                 className='w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light placeholder:font-medium dark:placeholder-muted-dark focus:border-primary'
