@@ -5,6 +5,15 @@ import { useState } from 'react'
 import Datepicker from "react-tailwindcss-datepicker";
 import { Button } from '../ui/button';
 import type { AddIncomeRequest } from '@/lib/transaction';
+import { z } from "zod";
+import toast from "react-hot-toast";
+
+const addIncomeSchema = z.object({
+  amount: z.number().min(0.01, "Amount must be greater than 0"),
+  description: z.string().min(1, "Description is required"),
+  account: z.string().min(1, "Account is required"),
+  date: z.string().min(1, "Date is required"),
+});
 
 type IncomeFormModalProps = {
     incomeModalOpen: boolean;
@@ -20,6 +29,7 @@ export const IncomeFormModal: React.FC<IncomeFormModalProps> = ({ incomeModalOpe
     const [addIncomeFormData, setAddIncomeFormData] = useState({
         amount: 0,
         description: '',
+        account: '',
         date: new Date().toISOString(),
     })
 
@@ -66,7 +76,12 @@ export const IncomeFormModal: React.FC<IncomeFormModalProps> = ({ incomeModalOpe
                                 </div>
                                 <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 ">
                                     <form className="space-y-3" onSubmit={(e) => {
-                                        e.preventDefault()
+                                        e.preventDefault();
+                                        const result = addIncomeSchema.safeParse(addIncomeFormData);
+                                        if (!result.success) {
+                                            result.error.issues.forEach(i => toast.error(i.message));
+                                            return;
+                                        }
                                         handleAddIncomeSubmit(addIncomeFormData)
                                     }}>
                                         <label htmlFor="amount" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
@@ -85,17 +100,31 @@ export const IncomeFormModal: React.FC<IncomeFormModalProps> = ({ incomeModalOpe
                                             />
                                         </div>
                                         <label htmlFor="source" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
-                                            Source
+                                            Description
                                         </label>
                                         <div className="space-y-2 ">
-                                            <select id="source" value={addIncomeFormData.description ?? ""} onChange={e => {
-                                                console.log("selected:", e.target.value);
-                                                setAddIncomeFormData(prev => ({ ...prev, description: e.target.value }));
+                                            <Input
+                                                id="source"
+                                                name="source"
+                                                type="string"
+                                                value={addIncomeFormData.description}
+                                                onChange={e => setAddIncomeFormData(prev => ({ ...prev, description: e.target.value}))}
+                                                placeholder="Enter income description..."
+                                                required
+                                                className='w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark placeholder:font-medium focus:border-primary'
+                                            />
+                                        </div>
+                                        <label htmlFor="Account" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
+                                            Account
+                                        </label>
+                                        <div className="space-y-2 ">
+                                            <select id="Account" value={addIncomeFormData.account ?? ""} onChange={e => {
+                                                setAddIncomeFormData(prev => ({ ...prev, account: e.target.value }));
                                             }} className="bg-background-light border px-3 text-muted-light py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-30 font-semibold text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:border-primary">
-                                                <option value="" disabled>Select a source</option>
-                                                <option value="Salary">Salary</option>
-                                                <option value="Freelance">Freelance</option>
-                                                <option value="Other">Other</option>
+                                                <option value="" disabled>Select an account</option>
+                                                <option value="Account 1">Account 1</option>
+                                                <option value="Account 2">Account 2</option>
+                                                <option value="Account 3">Account 3</option>
                                             </select>
                                         </div>
                                         <label htmlFor="Datepicker" className="block text-sm font-medium text-foreground-light dark:text-foreground-dark">
