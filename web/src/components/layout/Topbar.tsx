@@ -1,9 +1,11 @@
 import { BrandLogoSvg, NotificationSvg } from "@/assets/icons";
 import { NavLink, useLocation } from "react-router-dom";
 import avatarImage from "@/assets/avatar.png";
+import { useAppSelector } from "@/app/hooks";
 
 export default function Topbar() {
   const location = useLocation();
+  const {name} = useAppSelector(u => u.user);
 
   return (
     <header className="p-4 mb-2 bg-white">
@@ -25,7 +27,7 @@ export default function Topbar() {
           </div>
           <img src={avatarImage} alt="avatar image" className="size-10"></img>
           <div className="flex-row">
-            <h2 className="font-bold text-foreground-light">Name</h2>
+            <h2 className="font-bold text-foreground-light">{name}</h2>
             <p className="text-muted-light">Account</p>
           </div>
         </div>

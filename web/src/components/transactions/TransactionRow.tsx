@@ -19,7 +19,7 @@ export const TransactionRow: React.FC<TransactionRowProps> = ({ transaction, han
             <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">{transaction.account}	</td>
             {transaction.amount > 0 ? <td className="p-4 text-sm foreground-light dark:text-slate-200 text-green-500">{transaction.amount}</td> : <td className="p-4 text-sm foreground-light dark:text-slate-200 text-red-500">{transaction.amount}</td>}
             <td className="p-4"><EditSvg /></td>
-            <td className="p-4"><Button onClick={() => handleClick(transaction.id)} className="bg-white hover:bg-background-light transition-none disabled:opacity-100"><DeleteSvg className="size-6" /> </Button> </td>
+            <td className="p-4"><Button onClick={() => handleClick(transaction.id)} className="bg-white hover:bg-background-light transition-none disabled:opacity-100"><DeleteSvg className="size-6 bg-white hover:bg-background-light transition-none disabled:opacity-100" /> </Button> </td>
         </tr>
     );
 }
