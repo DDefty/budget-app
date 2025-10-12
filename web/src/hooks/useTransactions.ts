@@ -1,11 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { transactionApi } from "@/lib/transaction";
-import type { TransactionsResponse, AddIncomeRequest, AddExpenseRequest } from "@/lib/transaction";
+import type { AddIncomeRequest, AddExpenseRequest, Transaction } from "@/lib/transaction";
 import { handleApiError } from "@/lib/errorHandler";
 import toast from "react-hot-toast";
 
 export function useTransactions() {
-  const [transactions, setTransactions] = useState<TransactionsResponse | []>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchTransactions = useCallback(async () => {
