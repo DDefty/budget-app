@@ -1,11 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
 import { transactionApi } from "@/lib/transaction";
-import type { AddIncomeRequest, AddExpenseRequest, Transaction } from "@/lib/transaction";
+import type { TransactionsResponse, AddIncomeRequest, AddExpenseRequest } from "@/lib/transaction";
 import { handleApiError } from "@/lib/errorHandler";
-import toast from "react-hot-toast";
 
 export function useTransactions() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transactions, setTransactions] = useState<TransactionsResponse | []>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchTransactions = useCallback(async () => {
@@ -24,7 +23,6 @@ export function useTransactions() {
     try {
       const res = await transactionApi.postIncomeTransaction(payload);
       await fetchTransactions();
-      toast.success("Income transaction added successfully!");
       return res;
     } catch (err) {
       handleApiError(err);
@@ -36,7 +34,6 @@ export function useTransactions() {
     try {
       const res = await transactionApi.postExpenseTransaction(payload);
       await fetchTransactions();
-      toast.success("Expense transaction added successfully!");
       return res;
     } catch (err) {
       handleApiError(err);
@@ -48,7 +45,6 @@ export function useTransactions() {
     try {
       await transactionApi.deleteTransaction(id);
       await fetchTransactions();
-      toast.success("Transaction deleted successfully!");
     } catch (err) {
       handleApiError(err);
       throw err;
@@ -59,7 +55,6 @@ export function useTransactions() {
     try {
       await transactionApi.editIncomeTransaction(payload, id);
       await fetchTransactions();
-      toast.success("Income transaction edited successfully!");
     } catch (err) {
       handleApiError(err);
       throw err;
@@ -70,7 +65,6 @@ export function useTransactions() {
     try {
       await transactionApi.editExpenseTransaction(payload, id);
       await fetchTransactions();
-      toast.success("Expense transaction edited successfully!");
     } catch (err) {
       handleApiError(err);
       throw err;

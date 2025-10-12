@@ -1,7 +1,7 @@
 import { ExpenseFormModal } from "@/components/transactions/ExpenseFormModal";
 import { IncomeFormModal } from "@/components/transactions/IncomeFormModal";
 import { NewTransactionModal } from "@/components/transactions/NewTransactionModal";
-import { TransactionsFilters } from "@/components/transactions/TransactionsFilters";
+import TransactionsFilters from "@/components/transactions/TransactionsFilters";
 import { TransactionsTable } from "@/components/transactions/TransactionsTable";
 import { Button } from "@/components/ui/button";
 import toast, { Toaster } from "react-hot-toast";
@@ -10,7 +10,7 @@ import { z } from "zod";
 import { useModal } from "@/hooks/useModal";
 import { useTransactions } from "@/hooks/useTransactions";
 import type { AddExpenseRequest, AddIncomeRequest, Transaction } from "@/lib/transaction";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Dashboard() {
   const newModal = useModal();
@@ -22,19 +22,6 @@ export default function Dashboard() {
   });
   const [isEdit, setIsEdit] = useState(false);
   const { transactions, loading, addIncome, addExpense, deleteTransaction, editIncomeTransaction, editExpenseTransaction } = useTransactions();
-
-  const [transactionsTable, setTransactionsTable] = useState<Transaction[]>(transactions);
-
-  const [categories, setCategories] = useState<string[]>([]);
-  const [dates, setDates] = useState<string[]>([]);
-
-  const [categoryFilter, setCategoryFilter] = useState<string>('');
-  const [amountFilter, setAmountFilter] = useState({
-    min: '',
-    max: ''
-  });
-  const [dateFilter, setDateFilter] = useState<string>('');
-  const [query, setQuery] = useState<string>('');
 
   const [editIncomeValues, setEditIncomeValues] = useState({
     id: '',
@@ -53,40 +40,6 @@ export default function Dashboard() {
     date: '',
     note: '',
   });
-
-  useEffect(() => {
-    if (transactions) {
-      setTransactionsTable(transactions);
-      setCategories([...new Set(transactions.map(t => t.category.name))]);
-      setDates([...new Set(transactions.map(t => new Date(t.date).toLocaleString("en-US", { month: "long" })))]);
-    }
-  }, [transactions])
-
-  useEffect(() => {
-    let results = [...transactions];
-    if (query && query.trim() !== '') {
-      results = results.filter(t => t.description.toLowerCase().includes(query.toLowerCase()));
-    }
-    if (categoryFilter && categoryFilter.trim() !== '') {
-      results = results.filter(t => t.category.name.toLowerCase().includes(categoryFilter.toLowerCase()));
-    }
-    if (amountFilter.min !== '' || amountFilter.max !== '') {
-      results = results.filter(t => {
-        const amount = Number(t.amount);
-        const min = Number(amountFilter.min);
-        const max = Number(amountFilter.max);
-
-        return (
-          (amountFilter.min === '' || amount >= min) &&
-          (amountFilter.max === '' || amount <= max)
-        );
-      });
-    }
-    if (dateFilter && dateFilter.trim() !== '') {
-      results = results.filter(t => new Date(t.date).toLocaleString("en-US", { month: "long" }) === dateFilter);
-    }
-    setTransactionsTable(results);
-  }, [transactions, query, categoryFilter, amountFilter, dateFilter]);
 
   const handleAddIncomeSubmit = async (data: AddIncomeRequest) => {
     try {
@@ -113,12 +66,12 @@ export default function Dashboard() {
   const handleClickEdit = (transaction: Transaction) => {
     if (transaction.category.kind === 'INCOME') {
       setEditIncomeValues({ id: transaction.id, amount: transaction.amount, description: transaction.description, account: transaction.account, date: transaction.date });
-      setValue({ startDate: new Date(transaction.date), endDate: new Date(transaction.date) })
+      setValue({startDate: new Date(transaction.date), endDate: new Date(transaction.date)})
       setIsEdit(true);
       incomeModal.openModal()
     } else if (transaction.category.kind === 'EXPENSE') {
       setEditExpenseValues({ id: transaction.id, amount: transaction.amount, description: transaction.description, account: transaction.account, date: transaction.date, category: transaction.category.name, note: transaction.note });
-      setValue({ startDate: new Date(transaction.date), endDate: new Date(transaction.date) })
+      setValue({startDate: new Date(transaction.date), endDate: new Date(transaction.date)})
       setIsEdit(true);
       expenseModal.openModal()
     }
@@ -164,14 +117,14 @@ export default function Dashboard() {
         </Button>
       </div>
 
-      <TransactionsFilters categories={categories} dates={dates} query={query} setQuery={setQuery} categoryFilter={categoryFilter} setCategoryFilter={setCategoryFilter} amountFilter={amountFilter ?? 0} setAmountFilter={setAmountFilter} dateFilter={dateFilter} setDateFilter={setDateFilter} />
-      <TransactionsTable transactions={transactionsTable} handleClick={handleClickDelete} handleClickEdit={handleClickEdit} loading={loading} />
+      <TransactionsFilters />
+      <TransactionsTable transactions={Array.isArray(transactions) ? transactions : []} handleClick={handleClickDelete} handleClickEdit={handleClickEdit} loading={loading} />
 
       <NewTransactionModal
         newModalOpen={newModal.open}
         handleCloseModals={() => { newModal.closeModal(); incomeModal.closeModal(); expenseModal.closeModal(); }}
-        handleIncomeModalOpen={() => { newModal.closeModal(); incomeModal.openModal(); setEditIncomeValues({ id: '', amount: 0, description: '', account: '', date: '' }); setValue({ startDate: new Date(), endDate: new Date() }); setIsEdit(false) }}
-        handleExpenseModalOpen={() => { newModal.closeModal(); expenseModal.openModal(); setEditExpenseValues({ id: '', amount: 0, description: '', account: '', date: '', category: '', note: '' }); setValue({ startDate: new Date(), endDate: new Date() }); setIsEdit(false) }}
+        handleIncomeModalOpen={() => { newModal.closeModal(); incomeModal.openModal(); setEditIncomeValues({ id: '', amount: 0, description: '', account: '', date: '' }); setValue({startDate: new Date(), endDate: new Date()}); setIsEdit(false)}}
+        handleExpenseModalOpen={() => { newModal.closeModal(); expenseModal.openModal(); setEditExpenseValues({ id: '', amount: 0, description: '', account: '', date: '', category: '', note: '' }); setValue({startDate: new Date(), endDate: new Date()}); setIsEdit(false)}}
       />
 
       <IncomeFormModal

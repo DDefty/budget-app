@@ -27,8 +27,8 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({ transactio
                     </thead>
                     <tbody>
                         {transactions !== undefined &&
-                            transactions.map((t, idx) => (
-                                <TransactionRow key={idx} transaction={t} handleClick={handleClick} handleClickEdit={handleClickEdit} />
+                            transactions.map((t) => (
+                                <TransactionRow transaction={t} handleClick={handleClick} handleClickEdit={handleClickEdit} />
                             ))}
                     </tbody>
                 </table>
