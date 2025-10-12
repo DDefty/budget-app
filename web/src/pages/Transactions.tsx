@@ -57,7 +57,13 @@ export default function Dashboard() {
   useEffect(() => {
     if (transactions) {
       setTransactionsTable(transactions);
-      setCategories([...new Set(transactions.map(t => t.category.name))]);
+      setCategories([
+        ...new Set(
+          transactions
+            .map(t => t.category?.name)
+            .filter((name): name is string => !!name && name.trim() !== "")
+        )
+      ]);
       setDates([...new Set(transactions.map(t => new Date(t.date).toLocaleString("en-US", { month: "long" })))]);
     }
   }, [transactions])
