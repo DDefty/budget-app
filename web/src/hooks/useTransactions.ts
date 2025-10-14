@@ -12,7 +12,7 @@ export function useTransactions() {
     setLoading(true);
     try {
       const data = await transactionApi.getUserTransactions();
-      setTransactions(Array.isArray(data) ? data : []);
+      setTransactions(Array.isArray(data.transactions) ? data.transactions : []);
     } catch (err) {
       handleApiError(err);
     } finally {

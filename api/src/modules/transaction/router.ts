@@ -28,7 +28,7 @@ transaction.get('/transactions', requireAuth, async (req, res) => {
     ])
 
     res.status(200).json({
-        data: transactions,
+        transactions: transactions,
         pagination: {
             total,
             page,
