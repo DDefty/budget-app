@@ -7,12 +7,19 @@ import toast from "react-hot-toast";
 export function useTransactions() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(false);
+  const [pagination, setPagination] = useState({
+    total: 0,
+    page: 0,
+    limit: 0,
+    totalPages: 0
+  })
 
   const fetchTransactions = useCallback(async () => {
     setLoading(true);
     try {
       const data = await transactionApi.getUserTransactions();
       setTransactions(Array.isArray(data.transactions) ? data.transactions : []);
+      setPagination(data.pagination)
     } catch (err) {
       handleApiError(err);
     } finally {
@@ -55,7 +62,7 @@ export function useTransactions() {
     }
   }, [fetchTransactions]);
 
-  const editIncomeTransaction = useCallback(async (payload:AddIncomeRequest, id: string) => {
+  const editIncomeTransaction = useCallback(async (payload: AddIncomeRequest, id: string) => {
     try {
       await transactionApi.editIncomeTransaction(payload, id);
       await fetchTransactions();
@@ -66,7 +73,7 @@ export function useTransactions() {
     }
   }, [fetchTransactions]);
 
-  const editExpenseTransaction = useCallback(async (payload:AddExpenseRequest, id: string) => {
+  const editExpenseTransaction = useCallback(async (payload: AddExpenseRequest, id: string) => {
     try {
       await transactionApi.editExpenseTransaction(payload, id);
       await fetchTransactions();
@@ -81,5 +88,5 @@ export function useTransactions() {
     void fetchTransactions();
   }, [fetchTransactions]);
 
-  return { transactions, loading, fetchTransactions, addIncome, addExpense, deleteTransaction, setTransactions, editIncomeTransaction, editExpenseTransaction };
+  return { transactions, pagination, loading, fetchTransactions, addIncome, addExpense, deleteTransaction, setTransactions, editIncomeTransaction, editExpenseTransaction };
 }

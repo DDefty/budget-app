@@ -11,6 +11,7 @@ import { useModal } from "@/hooks/useModal";
 import { useTransactions } from "@/hooks/useTransactions";
 import type { AddExpenseRequest, AddIncomeRequest, Transaction } from "@/lib/transaction";
 import { useEffect, useState } from "react";
+import { TransactionsPagination } from "@/components/transactions/TransactionsPagination";
 
 export default function Dashboard() {
   const newModal = useModal();
@@ -21,7 +22,7 @@ export default function Dashboard() {
     endDate: new Date()
   });
   const [isEdit, setIsEdit] = useState(false);
-  const { transactions, loading, addIncome, addExpense, deleteTransaction, editIncomeTransaction, editExpenseTransaction } = useTransactions();
+  const { transactions, pagination, loading, addIncome, addExpense, deleteTransaction, editIncomeTransaction, editExpenseTransaction } = useTransactions();
 
   const [transactionsTable, setTransactionsTable] = useState<Transaction[]>(transactions);
 
@@ -67,6 +68,7 @@ export default function Dashboard() {
       setDates([...new Set(transactions.map(t => new Date(t.date).toLocaleString("en-US", { month: "long" })))]);
     }
   }, [transactions])
+  
 
   useEffect(() => {
     let results = [...transactions];
@@ -201,6 +203,8 @@ export default function Dashboard() {
         editTransactionState={editExpenseValues}
         isEdit={isEdit}
       />
+
+      {!loading && <TransactionsPagination pagination={pagination}/>}
     </div>
   );
 }
