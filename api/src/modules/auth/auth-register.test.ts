@@ -1,24 +1,8 @@
 import request from 'supertest'
 import { app } from '../../server'
-import { faker } from '@faker-js/faker';
 import { genAuthData } from '../../utils/genAuthData';
 
 process.env.COOKIE_NAME ??= 'token'
-
-
-vi.mock('../lib/prisma', () => ({
-    prisma: {
-        user: {
-            findUnique: vi.fn(),
-            create: vi.fn(),
-        },
-    },
-}))
-
-vi.mock('bcrypt', () => ({
-    default: { hash: vi.fn() },
-}))
-
 
 describe('POST /auth/register', () => {
     beforeEach(() => {

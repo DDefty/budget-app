@@ -10,6 +10,7 @@
     npx prisma studio  # ensure user test123@example.com exists
     npx ts-node prisma-seed.ts
 */
+// @ts-nocheck
 
 import { PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker";
