@@ -7,6 +7,7 @@
   "type": "module",
   "main": "dist/server.js",
   "scripts": {
+    "prepare": "husky",
     "dev": "node --import tsx src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
@@ -38,6 +39,7 @@
     "@types/node": "^22.18.10",
     "@types/supertest": "^6.0.3",
     "@vitest/ui": "^3.2.4",
+    "husky": "^9.1.7",
     "prisma": "^6.17.0",
     "supertest": "^7.1.4",
     "ts-node": "^10.9.2",
