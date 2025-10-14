@@ -8,7 +8,7 @@ import { env } from './lib/env'
 import { auth } from './modules/auth/router'
 import { transaction } from './modules/transaction/router'
 
-const app = express()
+export const app = express()
 
 app.use(helmet())
 app.use(cors({ origin: env.WEB_ORIGIN, credentials: true }))
