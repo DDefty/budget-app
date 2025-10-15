@@ -6,7 +6,7 @@ import { TransactionsTable } from "@/components/transactions/TransactionsTable";
 import { Button } from "@/components/ui/button";
 import toast, { Toaster } from "react-hot-toast";
 import { z } from "zod";
-
+import { useSearchParams } from "react-router-dom";
 import { useModal } from "@/hooks/useModal";
 import { useTransactions } from "@/hooks/useTransactions";
 import type { AddExpenseRequest, AddIncomeRequest, Transaction } from "@/lib/transaction";
@@ -22,7 +22,9 @@ export default function Dashboard() {
     endDate: new Date()
   });
   const [isEdit, setIsEdit] = useState(false);
-  const { transactions, pagination, loading, addIncome, addExpense, deleteTransaction, editIncomeTransaction, editExpenseTransaction } = useTransactions();
+  const { transactions, pagination, loading, addIncome, addExpense, deleteTransaction, editIncomeTransaction, editExpenseTransaction, page, setPage, } = useTransactions();
+  const [sp, setSp] = useSearchParams();
+  const pageFromUrl = Math.max(1, Number(sp.get("page") || 1));
 
   const [transactionsTable, setTransactionsTable] = useState<Transaction[]>(transactions);
 
@@ -56,6 +58,10 @@ export default function Dashboard() {
   });
 
   useEffect(() => {
+    if (page !== pageFromUrl) setPage(pageFromUrl);
+  }, [pageFromUrl, page, setPage]);
+
+  useEffect(() => {
     if (transactions) {
       setTransactionsTable(transactions);
       setCategories([
@@ -68,7 +74,7 @@ export default function Dashboard() {
       setDates([...new Set(transactions.map(t => new Date(t.date).toLocaleString("en-US", { month: "long" })))]);
     }
   }, [transactions])
-  
+
 
   useEffect(() => {
     let results = [...transactions];
@@ -204,7 +210,7 @@ export default function Dashboard() {
         isEdit={isEdit}
       />
 
-      {!loading && <TransactionsPagination pagination={pagination}/>}
+      {!loading && <TransactionsPagination pagination={pagination} />}
     </div>
   );
 }
