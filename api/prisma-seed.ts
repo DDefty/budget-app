@@ -20,27 +20,25 @@ const prisma = new PrismaClient();
 
 // ---- Local types (avoid Prisma-specific enum exports) ----
 type CategoryKind = "EXPENSE" | "INCOME";
-type Currency = "PLN" | "EUR" | "USD" | "GBP";
+type Currency = "PLN";
 
 // ---- Config ----
 const EMAIL = "test123@example.com";
 const TX_COUNT = 200; // transactions to create
-const YEARS = 3;        // random date span
+const YEARS = 1;        // random date span
 const BATCH = 1000;     // createMany chunk size
 
 // ---- Data pools ----
 const expenseCategoryPool = [
-  "Groceries","Rent","Utilities","Transport","Restaurants","Entertainment",
-  "Healthcare","Clothing","Education","Travel","Subscriptions","Gifts",
-  "Household","Insurance","Taxes","Other",
+  "Groceries","Rent","Utilities","Transport",
 ] as const;
 
 const incomeCategoryPool = [
-  "Salary","Bonus","Freelance","Investments","Interest","Refunds","Gifts","Other",
+  "Salary","Bonus",
 ] as const;
 
-const accountPool = ["Main","Savings","Credit Card","Revolut","Cash","Brokerage"] as const;
-const currencies: Currency[] = ["PLN","EUR","USD","GBP"];
+const accountPool = ["Credit Card","Revolut"] as const;
+const currencies: Currency[] = ["PLN"];
 
 // ---- Helpers ----
 function randChoice<T>(arr: readonly T[] | T[]): T {
@@ -115,7 +113,7 @@ async function main() {
   for (let i = 0; i < TX_COUNT; i++) {
     const kind: CategoryKind = Math.random() < 0.8 ? "EXPENSE" : "INCOME";
     const catList = kind === "EXPENSE" ? expenseCats : incomeCats;
-    const category = Math.random() < 0.9 ? randChoice(catList) : null;
+    const category = randChoice(catList);
     const date = randomDateWithinYears(YEARS);
 
     rows[i] = {

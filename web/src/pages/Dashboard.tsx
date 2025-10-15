@@ -1,8 +1,10 @@
 import { LightbulbSvg } from "@/assets/icons";
+import { useDashboard } from "@/hooks/useDashboard";
 import { Toaster } from "react-hot-toast";
 import { NavLink } from "react-router-dom";
 
 export default function Dashboard() {
+  const { dashboardTransactions, dashboardAnalysis, dashobardOverview, loading } = useDashboard();
   return (
     <div>
       <Toaster />
@@ -11,41 +13,35 @@ export default function Dashboard() {
         <div className="flex mt-16 justify-between mb-16 gap-x-6">
           <div className="flex-row gap-y-9 w-1/3 h-28 rounded-lg bg-white py-4 px-6 shadow-sm content-center">
             <h2 className="text-l text-muted-light">Total Balance</h2>
-            <p className="text-3xl font-bold">$12,450.00</p>
+            <p className="text-3xl font-bold">${dashobardOverview?.totalBalance}</p>
           </div>
           <div className="flex-row gap-y-9 w-1/3 h-28 rounded-lg bg-white py-4 px-6 shadow-sm content-center">
             <h2 className="text-l  text-muted-light">Monthly Spending</h2>
-            <p className="text-3xl font-bold">$2,340.50</p>
+            <p className="text-3xl font-bold">${dashobardOverview?.totalExpense}</p>
           </div>
           <div className="flex-row gap-y-9 w-1/3 h-28 rounded-lg bg-white py-4 px-6 shadow-sm content-center">
             <h2 className="text-l text-muted-light">Upcoming Bills</h2>
-            <p className="text-3xl font-bold">$850.00</p>
+            <p className="text-3xl font-bold">${dashobardOverview?.upcomingBills}</p>
           </div>
         </div>
         <div className="flex gap-x-6">
           <div className="flex-col w-1/2 h-80 rounded-lg bg-white py-6 px-6 shadow-sm">
             <h3 className="text-xl font-bold mb-6">Expense Analysis</h3>
-            <div className="flex items-end justify-between h-48 gap-4">
-              <div className="flex flex-col items-center w-1/5 gap-2">
-                <div className="w-full bg-sky-200 rounded-t-sm" style={{ height: '90px' }}></div>
-                <span className="text-sm text-gray-600">Food</span>
-              </div>
-              <div className="flex flex-col items-center w-1/5 gap-2">
-                <div className="w-full bg-sky-200 rounded-t-sm" style={{ height: '180px' }}></div>
-                <span className="text-sm text-gray-600">Transport</span>
-              </div>
-              <div className="flex flex-col items-center w-1/5 gap-2">
-                <div className="w-full bg-sky-200 rounded-t-sm" style={{ height: '20px' }}></div>
-                <span className="text-sm text-gray-600">Shopping</span>
-              </div>
-              <div className="flex flex-col items-center w-1/5 gap-2">
-                <div className="w-full bg-sky-200 rounded-t-sm" style={{ height: '50px' }}></div>
-                <span className="text-sm text-gray-600">Utilities</span>
-              </div>
-              <div className="flex flex-col items-center w-1/5 gap-2">
-                <div className="w-full bg-sky-200 rounded-t-sm" style={{ height: '140px' }}></div>
-                <span className="text-sm text-gray-600">Other</span>
-              </div>
+            <div className="flex items-end gap-6 h-48">
+              {dashboardAnalysis?.map((it, idx) => {
+                const pct = Math.min(100, Math.max(0, it.percentage));
+                return (
+                  <div key={idx} className="flex-1 flex flex-col items-center">
+                    <div className="w-full h-48 flex items-end">
+                      <div
+                        className="w-full bg-sky-200 rounded-t-sm transition-all duration-500"
+                        style={{ height: `${pct}%` }}
+                      />
+                    </div>
+                    <span className="mt-2 text-sm text-gray-600 text-center">{it.category}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
           <div className="flex-row w-1/2 h-80 rounded-lg bg-white py-6 px-6 shadow-sm">
@@ -73,7 +69,7 @@ export default function Dashboard() {
             <NavLink to="/transactions" className='text-primary hover:text-primary/80 text-l font-medium'>View all</NavLink>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left">
+            {!loading ? <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-background-light dark:border-background-dark">
                   <th className="p-4 text-sm font-semibold text-muted-light">Date</th>
@@ -83,32 +79,16 @@ export default function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td className="p-4 text-sm foreground-light dark:text-slate-200">Jul 12</td>
-                  <td className="p-4 text-sm foreground-light dark:text-slate-200">Grocery Store</td>
-                  <td className="p-4 text-sm foreground-light dark:text-slate-200">Food</td>
-                  <td className="p-4 text-sm foreground-light dark:text-slate-200 text-right">-$75.50</td>
-                </tr>
-                <tr>
-                  <td className="p-4 text-sm foreground-light dark:text-slate-200">Jul 11</td>
-                  <td className="p-4 text-sm foreground-light dark:text-slate-200">Monthly Subscription</td>
-                  <td className="p-4 text-sm foreground-light dark:text-slate-200">Entertainment</td>
-                  <td className="p-4 text-sm foreground-light dark:text-slate-200 text-right">-$15.00</td>
-                </tr>
-                <tr>
-                  <td className="p-4 text-sm foreground-light dark:text-slate-200">Jul 10</td>
-                  <td className="p-4 text-sm foreground-light dark:text-slate-200">Gas Station</td>
-                  <td className="p-4 text-sm foreground-light dark:text-slate-200">Transport</td>
-                  <td className="p-4 text-sm foreground-light dark:text-slate-200 text-right">-$45.20</td>
-                </tr>
-                <tr>
-                  <td className="p-4 text-sm foreground-light dark:text-slate-200">Jul 9</td>
-                  <td className="p-4 text-sm foreground-light dark:text-slate-200">Restaurant</td>
-                  <td className="p-4 text-sm foreground-light dark:text-slate-200">Food</td>
-                  <td className="p-4 text-sm foreground-light dark:text-slate-200 text-right">-$120.00</td>
-                </tr>
+                {dashboardTransactions.map((t, idx) => (
+                  <tr key={idx}>
+                    <td className="p-4 text-sm foreground-light dark:text-slate-200">{t.date.slice(0, 10)}</td>
+                    <td className="p-4 text-sm foreground-light dark:text-slate-200">{t.description}</td>
+                    <td className="p-4 text-sm foreground-light dark:text-slate-200">{t.category.name}</td>
+                    <td className="p-4 text-sm foreground-light dark:text-slate-200 text-right">{t.amount}</td>
+                  </tr>
+                ))}
               </tbody>
-            </table>
+            </table> : null}
           </div>
         </div>
       </div>

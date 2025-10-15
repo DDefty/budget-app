@@ -23,7 +23,7 @@ export default function Dashboard() {
   });
   const [isEdit, setIsEdit] = useState(false);
   const { transactions, pagination, loading, addIncome, addExpense, deleteTransaction, editIncomeTransaction, editExpenseTransaction, page, setPage, } = useTransactions();
-  const [sp, setSp] = useSearchParams();
+  const [sp] = useSearchParams();
   const pageFromUrl = Math.max(1, Number(sp.get("page") || 1));
 
   const [transactionsTable, setTransactionsTable] = useState<Transaction[]>(transactions);
