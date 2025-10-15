@@ -1,24 +1,33 @@
 import { useEffect, useState, useCallback } from "react";
 import { transactionApi } from "@/lib/transaction";
-import type { AddIncomeRequest, AddExpenseRequest, Transaction } from "@/lib/transaction";
+import type { AddIncomeRequest, AddExpenseRequest, Transaction, TransactionsResponse } from "@/lib/transaction";
 import { handleApiError } from "@/lib/errorHandler";
 import toast from "react-hot-toast";
+type Pagination = TransactionsResponse["pagination"];
 
-export function useTransactions() {
+export function useTransactions(initialPage = 1) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(initialPage);
+  const [pagination, setPagination] = useState<Pagination>({
+    total: 0,
+    page: initialPage,
+    limit: 0,
+    totalPages: 0,
+  });
 
-  const fetchTransactions = useCallback(async () => {
+  const fetchTransactions = useCallback(async (p = page) => {
     setLoading(true);
     try {
-      const data = await transactionApi.getUserTransactions();
+      const data = await transactionApi.getUserTransactions(p);
       setTransactions(Array.isArray(data.transactions) ? data.transactions : []);
+      setPagination(data.pagination)
     } catch (err) {
       handleApiError(err);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page]);
 
   const addIncome = useCallback(async (payload: AddIncomeRequest) => {
     try {
@@ -55,7 +64,7 @@ export function useTransactions() {
     }
   }, [fetchTransactions]);
 
-  const editIncomeTransaction = useCallback(async (payload:AddIncomeRequest, id: string) => {
+  const editIncomeTransaction = useCallback(async (payload: AddIncomeRequest, id: string) => {
     try {
       await transactionApi.editIncomeTransaction(payload, id);
       await fetchTransactions();
@@ -66,7 +75,7 @@ export function useTransactions() {
     }
   }, [fetchTransactions]);
 
-  const editExpenseTransaction = useCallback(async (payload:AddExpenseRequest, id: string) => {
+  const editExpenseTransaction = useCallback(async (payload: AddExpenseRequest, id: string) => {
     try {
       await transactionApi.editExpenseTransaction(payload, id);
       await fetchTransactions();
@@ -78,8 +87,23 @@ export function useTransactions() {
   }, [fetchTransactions]);
 
   useEffect(() => {
-    void fetchTransactions();
-  }, [fetchTransactions]);
+    void fetchTransactions(page);
+  }, [fetchTransactions, page]);
 
-  return { transactions, loading, fetchTransactions, addIncome, addExpense, deleteTransaction, setTransactions, editIncomeTransaction, editExpenseTransaction };
+  const nextPage = useCallback(() => {
+    setPage((p) => Math.min(p + 1, Math.max(1, pagination.totalPages)));
+  }, [pagination.totalPages]);
+
+  const prevPage = useCallback(() => {
+    setPage((p) => Math.max(1, p - 1));
+  }, []);
+
+  const goToPage = useCallback((p: number) => {
+    const clamped = Math.max(1, Math.min(p, Math.max(1, pagination.totalPages)));
+    setPage(clamped);
+  }, [pagination.totalPages]);
+
+  return {
+    transactions, pagination, page, loading, fetchTransactions, addIncome, addExpense, deleteTransaction, setPage, nextPage, prevPage, goToPage, setTransactions, editIncomeTransaction, editExpenseTransaction,
+  };
 }

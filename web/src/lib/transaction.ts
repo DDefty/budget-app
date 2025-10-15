@@ -47,8 +47,8 @@ export type TransactionsResponse = {
 // Transaction API functions
 export const transactionApi = {
   // Get User Transactions
-  getUserTransactions: async (): Promise<TransactionsResponse> => {
-    const response = await api.get('/transactions');
+  getUserTransactions: async (page: number): Promise<TransactionsResponse> => {
+    const response = await api.get(`/transactions?page=${page}`);
     return response.data;
   },
 
