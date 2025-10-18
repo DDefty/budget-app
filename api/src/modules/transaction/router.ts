@@ -10,12 +10,32 @@ transaction.get('/transactions', requireAuth, async (req, res) => {
     const userId = (req as any).userId as string
     if (!userId) return res.status(401).json({ error: 'Unauthenticated' })
 
-    const transactions = await prisma.transaction.findMany({
-        where: { userId },
-        select: { id: true, account: true, date: true, description: true, note: true, amount: true, currency: true, category: true }
-    })
+    const page = parseInt(req.query.page as string) || 1
+    const limit = parseInt(req.query.limit as string) || 10
+    const skip = (page - 1) * limit
 
-    res.status(200).json(transactions)
+    const [transactions, total] = await Promise.all([
+        prisma.transaction.findMany({
+            where: { userId },
+            select: { 
+                id: true, account: true, date: true, description: true, 
+                note: true, amount: true, currency: true, category: true 
+            },
+            skip,
+            take: limit,
+        }),
+        prisma.transaction.count({ where: { userId } })
+    ])
+
+    res.status(200).json({
+        transactions: transactions,
+        pagination: {
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit)
+        }
+    })
 })
 
 transaction.post('/transaction/addIncome', requireAuth, async (req, res) => {

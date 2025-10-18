@@ -1,48 +1,54 @@
 import { api } from './api';
 
 export type AddIncomeRequest = {
-    amount: number;
-    description: string;
-    account: string;
-    date: string;
+  amount: number;
+  description: string;
+  account: string;
+  date: string;
 }
 
 export type AddExpenseRequest = {
-    amount: number;
-    description: string;
-    date: string;
-    category: string;
-    account: string;
-    note: string;
+  amount: number;
+  description: string;
+  date: string;
+  category: string;
+  account: string;
+  note: string;
 }
 
 export type Transaction = {
-    id: string;
-    account: string;
-    date: string;
-    description: string;
-    note: string;
-    amount: number;
-    currency: string;
-    category: Category;
+  id: string;
+  account: string;
+  date: string;
+  description: string;
+  note: string;
+  amount: number;
+  currency: string;
+  category: Category;
 }
 
 export type Category = {
-    id: string;
-    userId: string;
-    name: string;
-    kind: string;
+  id: string;
+  userId: string;
+  name: string;
+  kind: string;
 }
 
 export type TransactionsResponse = {
-    transactions: Transaction[]
+  transactions: Transaction[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }
 }
 
 // Transaction API functions
 export const transactionApi = {
   // Get User Transactions
-  getUserTransactions: async (): Promise<TransactionsResponse> => {
-    const response = await api.get('/transactions');
+  getUserTransactions: async (page: number): Promise<TransactionsResponse> => {
+    const response = await api.get(`/transactions?page=${page}`);
     return response.data;
   },
 
