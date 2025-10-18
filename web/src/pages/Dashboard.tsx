@@ -1,4 +1,5 @@
 import { LightbulbSvg } from "@/assets/icons";
+import Loader from "@/components/common/Loader";
 import { useDashboard } from "@/hooks/useDashboard";
 import { Toaster } from "react-hot-toast";
 import { NavLink } from "react-router-dom";
@@ -13,21 +14,21 @@ export default function Dashboard() {
         <div className="flex mt-16 justify-between mb-16 gap-x-6">
           <div className="flex-row gap-y-9 w-1/3 h-28 rounded-lg bg-white py-4 px-6 shadow-sm content-center">
             <h2 className="text-l text-muted-light">Total Balance</h2>
-            <p className="text-3xl font-bold">${dashobardOverview?.totalBalance}</p>
+            {!loading ? <p className="text-3xl font-bold">${dashobardOverview?.totalBalance}</p> : <Loader />}
           </div>
           <div className="flex-row gap-y-9 w-1/3 h-28 rounded-lg bg-white py-4 px-6 shadow-sm content-center">
             <h2 className="text-l  text-muted-light">Monthly Spending</h2>
-            <p className="text-3xl font-bold">${dashobardOverview?.totalExpense}</p>
+            {!loading ? <p className="text-3xl font-bold">${dashobardOverview?.totalExpense}</p> : <Loader />}
           </div>
           <div className="flex-row gap-y-9 w-1/3 h-28 rounded-lg bg-white py-4 px-6 shadow-sm content-center">
             <h2 className="text-l text-muted-light">Upcoming Bills</h2>
-            <p className="text-3xl font-bold">${dashobardOverview?.upcomingBills}</p>
+            {!loading ? <p className="text-3xl font-bold">${dashobardOverview?.upcomingBills}</p> : <Loader />}
           </div>
         </div>
         <div className="flex gap-x-6">
           <div className="flex-col w-1/2 h-80 rounded-lg bg-white py-6 px-6 shadow-sm">
             <h3 className="text-xl font-bold mb-6">Expense Analysis</h3>
-            <div className="flex items-end gap-6 h-48">
+            {!loading ? <div className="flex items-end gap-6 h-48">
               {dashboardAnalysis?.map((it, idx) => {
                 const pct = Math.min(100, Math.max(0, it.percentage));
                 return (
@@ -42,7 +43,9 @@ export default function Dashboard() {
                   </div>
                 );
               })}
-            </div>
+            </div> :
+              <Loader />
+            }
           </div>
           <div className="flex-row w-1/2 h-80 rounded-lg bg-white py-6 px-6 shadow-sm">
             <h3 className="text-xl font-bold">Recommendations</h3>
@@ -88,7 +91,9 @@ export default function Dashboard() {
                   </tr>
                 ))}
               </tbody>
-            </table> : null}
+            </table> :
+              <Loader />
+            }
           </div>
         </div>
       </div>
