@@ -9,6 +9,7 @@ import Login from "@/pages/Auth/Login";
 import Register from "@/pages/Auth/Register";
 import NotFound from "@/pages/NotFound";
 import { useAppSelector } from "@/app/hooks";
+import Settings from "@/pages/Settings";
 
 function PrivateRoute({ children }: { children: React.ReactElement }) {
   const { status} = useAppSelector(u => u.user);
@@ -53,6 +54,12 @@ export default function AppRouter() {
             <PrivateRoute>
               <AppLayout><ImportPage/></AppLayout>
             </PrivateRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+              <AppLayout><Settings/></AppLayout>
           }
         />
         <Route path="*" element={<NotFound/>} />
