@@ -8,6 +8,7 @@ import { env } from './lib/env'
 import { auth } from './modules/auth/router'
 import { transaction } from './modules/transaction/router'
 import { dashboard } from './modules/dasboard/router'
+import { settings } from './modules/settings/router'
 
 export const app = express()
 
@@ -22,6 +23,7 @@ app.get('/healthz', (_req, res) => res.json({ ok: true }))
 app.use('/auth', auth)
 app.use('', transaction);
 app.use('', dashboard);
+app.use('', settings);
 
 app.listen(env.PORT, () => {
   console.log(`[api] up on http://localhost:${env.PORT}`)
