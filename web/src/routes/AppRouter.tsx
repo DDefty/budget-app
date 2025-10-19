@@ -12,7 +12,7 @@ import { useAppSelector } from "@/app/hooks";
 import Settings from "@/pages/Settings";
 
 function PrivateRoute({ children }: { children: React.ReactElement }) {
-  const { status} = useAppSelector(u => u.user);
+  const { status } = useAppSelector(u => u.user);
   return status === 'loggedIn' ? children : <Navigate to="/login" replace />;
 }
 
@@ -20,31 +20,37 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login/>} />
-        <Route path="/register" element={<Register/>} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/"
           element={
-              <AppLayout><Dashboard/></AppLayout>
+            <PrivateRoute>
+              <AppLayout><Dashboard /></AppLayout>
+            </PrivateRoute>
           }
         />
         <Route
           path="/dashboard"
           element={
-              <AppLayout><Dashboard/></AppLayout>
+            <PrivateRoute>
+              <AppLayout><Dashboard /></AppLayout>
+            </PrivateRoute>
           }
         />
         <Route
           path="/transactions"
           element={
-              <AppLayout><Transactions/></AppLayout>
+            <PrivateRoute>
+              <AppLayout><Transactions /></AppLayout>
+            </PrivateRoute>
           }
         />
         <Route
           path="/budgets"
           element={
             <PrivateRoute>
-              <AppLayout><Budgets/></AppLayout>
+              <AppLayout><Budgets /></AppLayout>
             </PrivateRoute>
           }
         />
@@ -52,17 +58,19 @@ export default function AppRouter() {
           path="/import"
           element={
             <PrivateRoute>
-              <AppLayout><ImportPage/></AppLayout>
+              <AppLayout><ImportPage /></AppLayout>
             </PrivateRoute>
           }
         />
         <Route
           path="/settings"
           element={
-              <AppLayout><Settings/></AppLayout>
+            <PrivateRoute>
+              <AppLayout><Settings /></AppLayout>
+            </PrivateRoute>
           }
         />
-        <Route path="*" element={<NotFound/>} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
