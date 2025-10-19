@@ -35,9 +35,17 @@ const userSlice = createSlice({
       state.birth_date = undefined;
       state.status = 'loggedOut';
     },
+    updateUser(state, action) {
+      state.email = action.payload.email;
+      state.id = action.payload.id;
+      state.name = action.payload.name;
+      state.gender = action.payload.gender;
+      state.birth_date = action.payload.birth_date;
+      state.status = 'loggedIn';
+    }
   },
 });
 
-export const { isLoggedIn, isLoggedOut } = userSlice.actions;
+export const { isLoggedIn, isLoggedOut, updateUser } = userSlice.actions;
 
 export default userSlice.reducer;
