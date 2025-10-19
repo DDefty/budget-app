@@ -6,6 +6,8 @@ type UserState = {
   name?: string;
   id?: string;
   error?: string;
+  gender?: string;
+  birth_date?: Date;
 };
 
 const initialState: UserState = {
@@ -21,10 +23,16 @@ const userSlice = createSlice({
       state.email = action.payload.email;
       state.id = action.payload.id;
       state.name = action.payload.name;
+      state.gender = action.payload.gender;
+      state.birth_date = action.payload.birth_date;
       state.status = 'loggedIn';
     },
     isLoggedOut(state) {
       state.email = undefined;
+      state.id = undefined;
+      state.name = undefined;
+      state.gender = undefined;
+      state.birth_date = undefined;
       state.status = 'loggedOut';
     },
   },
