@@ -30,7 +30,7 @@ const BATCH = 1000;     // createMany chunk size
 
 // ---- Data pools ----
 const expenseCategoryPool = [
-  "Groceries","Rent","Utilities","Transport",
+  "Groceries","Rent","Utilities","Transport", "Groceries", "Groceries", "Rent"
 ] as const;
 
 const incomeCategoryPool = [
