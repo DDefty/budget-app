@@ -23,14 +23,14 @@ type CategoryKind = "EXPENSE" | "INCOME";
 type Currency = "PLN";
 
 // ---- Config ----
-const EMAIL = "test123@example.com";
+const EMAIL = "dawid.kogut99@gmail.com";
 const TX_COUNT = 200; // transactions to create
 const YEARS = 1;        // random date span
 const BATCH = 1000;     // createMany chunk size
 
 // ---- Data pools ----
 const expenseCategoryPool = [
-  "Groceries","Rent","Utilities","Transport",
+  "Groceries","Rent","Utilities","Transport", "Groceries", "Groceries", "Rent"
 ] as const;
 
 const incomeCategoryPool = [

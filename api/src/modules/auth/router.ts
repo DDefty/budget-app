@@ -47,7 +47,7 @@ auth.post('/login', async (req, res) => {
 
   const token = signJwt({ uid: user.id })
   res.cookie(env.COOKIE_NAME, token, COOKIE_OPTIONS)
-  res.json({ id: user.id, name: user.name, email: user.email })
+  res.json({ id: user.id, name: user.name, email: user.email, gender: user.gender, birth_date: user.birth_date })
 })
 
 auth.post('/logout', (req, res) => {
@@ -63,7 +63,7 @@ auth.get('/me', async (req, res) => {
   const payload = verifyJwt(token)
   if (!payload) return res.status(401).json({ error: 'Invalid token' })
 
-  const user = await prisma.user.findUnique({ where: { id: payload.uid }, select: { id: true, name: true, email: true, createdAt: true } })
+  const user = await prisma.user.findUnique({ where: { id: payload.uid }, select: { id: true, name: true, email: true, gender: true, birth_date: true, createdAt: true } })
   if (!user) return res.status(401).json({ error: 'User not found' })
   res.json(user)
 })
