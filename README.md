@@ -101,5 +101,6 @@ It demonstrates strong full-stack engineering skills, including:
 - Frontend & backend automated testing
 
 ## 📸 Demo
-![App Demo](./assets/demo.gif)
+![Demo](assets/Demo.gif)
+
 
