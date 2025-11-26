@@ -23,7 +23,7 @@ type CategoryKind = "EXPENSE" | "INCOME";
 type Currency = "PLN";
 
 // ---- Config ----
-const EMAIL = "test123@example.com";
+const EMAIL = "dawid.kogut99@gmail.com";
 const TX_COUNT = 200; // transactions to create
 const YEARS = 1;        // random date span
 const BATCH = 1000;     // createMany chunk size

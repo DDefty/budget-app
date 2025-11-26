@@ -117,7 +117,7 @@ export default function Settings() {
                         <div className="w-full h-20 bg-white flex items-center " >
                             <div className="ml-4">
                                 <h3 className="font-semibold">Date of Birth</h3>
-                                {openInput === 'birth_date' ? <Input type="date" value={inputDate?.toString() || ''} onChange={(e) => setInputDate(e.target.value)}></Input> : < p className="text-muted-light">{birth_date !== undefined ? <>{birth_date.toString().slice(0, 10)}</> : null}</p>}
+                                12.02.1999
                             </div>
                             <div className="ml-auto mr-6">
                                 {openInput === 'birth_date' ?
