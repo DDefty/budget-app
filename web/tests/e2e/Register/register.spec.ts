@@ -1,5 +1,9 @@
 import { test } from '@playwright/test'
 import { RegisterPage } from '../../pages/RegisterPage/RegisterPage'
+import { generateCredentials } from '../../helpers/generateCredentials';
+import { DashboardPage } from '../../pages/DashboardPage/DashboardPage';
+
+
 
 test.describe('Register page', async () => {
     test('Can not register without username', async ({ page }) => {
@@ -109,7 +113,8 @@ test.describe('Register page', async () => {
         const registerPage = new RegisterPage(page);
         const dashboardPage = new DashboardPage(page);
 
-        const { username, email, password } = generateCredentials();
+        const { email, password, username } = generateCredentials();
+
 
         const validUsername = username.slice(0, 9);
 
@@ -123,5 +128,4 @@ test.describe('Register page', async () => {
 
     })
 })
-import { generateCredentials } from '../../helpers/generateCredentials';import { DashboardPage } from '../../pages/DashboardPage/DashboardPage';
 

@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 
 export function generateCredentials() {
     return {
-        username: faker.internet.username(),
+        username: faker.string.alphanumeric({ length: { min: 8, max: 12 } }),
         email: faker.internet.email(),
         password: faker.internet.password(),
         confirmPassword: faker.internet.password(),
