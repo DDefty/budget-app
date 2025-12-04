@@ -1,4 +1,5 @@
 import { expect, Locator, type Page } from "@playwright/test";
+import { ROUTES } from "../../utils/constants";
 
 export class RegisterPage  {
     readonly page: Page;
@@ -24,7 +25,7 @@ export class RegisterPage  {
     }
 
     async open() {
-        await this.page.goto('/register')
+        await this.page.goto(ROUTES.register)
     }
 
     async fillUsername(username: string){
@@ -44,7 +45,7 @@ export class RegisterPage  {
     }
 
     async registerIsOpen() {
-        await this.page.waitForURL('/register')
+        await this.page.waitForURL(ROUTES.register)
     }
 
     async clickSignIn() {

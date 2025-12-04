@@ -1,4 +1,5 @@
 import { expect, Locator, Page } from "@playwright/test";
+import { ROUTES } from "../../utils/constants";
 
 export class LoginPage {
     readonly page: Page;
@@ -16,11 +17,11 @@ export class LoginPage {
     }
 
     async loginPageOpen() {
-        await this.page.goto('/login');
+        await this.page.goto(ROUTES.login);
     }
 
     async loginPageIsOpen() {
-        await this.page.waitForURL('/login');
+        await this.page.waitForURL(ROUTES.login);
     }
 
     async fillEmail(email: string) {
@@ -36,7 +37,7 @@ export class LoginPage {
     }
 
     async assertDashboardOpen() {
-        await this.page.waitForURL('/dashboard');
+        await this.page.waitForURL(ROUTES.dashbaord);
     }
 
     async assertErrorMessage() {
