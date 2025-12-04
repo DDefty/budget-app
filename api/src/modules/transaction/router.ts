@@ -47,7 +47,7 @@ transaction.post('/transaction/addIncome', requireAuth, async (req, res) => {
     const { amount, description, account, date } = parse.data
 
     // HARDCODED categoryID
-    const transaction = await prisma.transaction.create({ data: { userId, categoryId: 'cmgluf6gd0001u0us3g1oujf7', account, date, description, amount, currency: 'PLN' } });
+    const transaction = await prisma.transaction.create({ data: { userId, categoryId: 'cmin9zav00007ndnnu90tzd59', account, date, description, amount, currency: 'PLN' } });
 
     res.status(201).json(transaction);
 })
@@ -61,7 +61,7 @@ transaction.post('/transaction/addExpense', requireAuth, async (req, res) => {
     const { amount, description, account, date, note } = parse.data
 
     // HARDCODED categoryID
-    const transaction = await prisma.transaction.create({ data: { userId, categoryId: 'cmgluf6gd0001u0us3g1oujf8', account, date, description, note, amount, currency: 'PLN' } });
+    const transaction = await prisma.transaction.create({ data: { userId, categoryId: 'cmin9zav00001ndnnu2hz70g5', account, date, description, note, amount, currency: 'PLN' } });
 
     res.status(201).json(transaction);
 })
