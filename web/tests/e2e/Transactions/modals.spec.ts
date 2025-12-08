@@ -1,53 +1,44 @@
 import { test } from '../../fixtures/auth.fixture'
+import { openModal } from '../../helpers/openModal';
 import { TransactionsPage } from '../../pages/TransactionsPage/TransactionsPage';
 
 test.describe('Modals', async () => {
-    test('Open Modal', async ({ page }) => {
-        const transactionsPage = new TransactionsPage(page);
+    test.use({ isLoggedIn: true });
 
-        await transactionsPage.openTransactionsPage();
-        await transactionsPage.assertTableHeadersValid();
+    test('Open Modal', async ({ page }) => {
+        await openModal(page);
     })
 
     test('Close Modal via Cancel', async ({ page }) => {
         const transactionsPage = new TransactionsPage(page);
 
-        await transactionsPage.openTransactionsPage();
-        await transactionsPage.assertTableHeadersValid();
+        await openModal(page);
+        await transactionsPage.modalClose()
+        await transactionsPage.assertModalClosed();
     })
 
-    test('Close Modal via X', async ({ page }) => {
-        const transactionsPage = new TransactionsPage(page);
-
-        await transactionsPage.openTransactionsPage();
-        await transactionsPage.assertTableHeadersValid();
-    })
-
-    test('Close Modal via Overlay Click', async ({ page }) => {
-        const transactionsPage = new TransactionsPage(page);
-
-        await transactionsPage.openTransactionsPage();
-        await transactionsPage.assertTableHeadersValid();
-    })
 
     test('Close Modal via ESC Key', async ({ page }) => {
         const transactionsPage = new TransactionsPage(page);
 
-        await transactionsPage.openTransactionsPage();
-        await transactionsPage.assertTableHeadersValid();
+        await openModal(page);
+        await transactionsPage.keyboardEscapeClick();
+        await transactionsPage.assertModalClosed();
     })
 
     test('Open Income Form', async ({ page }) => {
         const transactionsPage = new TransactionsPage(page);
 
-        await transactionsPage.openTransactionsPage();
-        await transactionsPage.assertTableHeadersValid();
+        await openModal(page);
+        await transactionsPage.openIncomeModal();
+        await transactionsPage.assertIncomeModalOpen();
     })
 
     test('Open Expense Form', async ({ page }) => {
         const transactionsPage = new TransactionsPage(page);
 
-        await transactionsPage.openTransactionsPage();
-        await transactionsPage.assertTableHeadersValid();
+        await openModal(page);
+        await transactionsPage.openExpenseModal();
+        await transactionsPage.assertExpenseModalOpen();
     })
 })

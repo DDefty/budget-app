@@ -1,29 +1,19 @@
 import { test } from '../../fixtures/auth.fixture'
+import { openModal } from '../../helpers/openModal';
 import { TransactionsPage } from '../../pages/TransactionsPage/TransactionsPage';
 
 test.describe('Add Expense Modal', async () => {
-    test('Expense Form Default Values', async ({ page }) => {
-        const transactionsPage = new TransactionsPage(page);
-
-        await transactionsPage.openTransactionsPage();
-        await transactionsPage.assertTableHeadersValid();
-    })
-
+    test.use({isLoggedIn: true});
     test('Expense Required Fields Validation', async ({ page }) => {
         const transactionsPage = new TransactionsPage(page);
 
-        await transactionsPage.openTransactionsPage();
-        await transactionsPage.assertTableHeadersValid();
+        await openModal(page);
+        await transactionsPage.openExpenseModal();
+        await transactionsPage.assertExpenseModalOpen();
+        
     })
 
     test('Add Valid Expense', async ({ page }) => {
-        const transactionsPage = new TransactionsPage(page);
-
-        await transactionsPage.openTransactionsPage();
-        await transactionsPage.assertTableHeadersValid();
-    })
-
-    test('Decimal Amount Handling', async ({ page }) => {
         const transactionsPage = new TransactionsPage(page);
 
         await transactionsPage.openTransactionsPage();

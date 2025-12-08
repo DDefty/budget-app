@@ -22,6 +22,18 @@ export class TransactionsPage {
     readonly navInfo: Locator;
     readonly nextPage: Locator;
     readonly prevPage: Locator;
+    readonly openModals: Locator;
+    readonly firstModal: Locator;
+    readonly cancelModalButton: Locator;
+    readonly incomeModal: Locator;
+    readonly expenseModal: Locator;
+    readonly incomeModalContainer: Locator;
+    readonly expenseModalContainer: Locator;
+    readonly expenseModalDate: Locator;
+    readonly expenseModalAmount: Locator;
+    readonly expenseModalDescription: Locator;
+    readonly expenseModalCategory: Locator;
+    readonly expenseModalAccount: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -43,6 +55,19 @@ export class TransactionsPage {
         this.navInfo = page.getByText(NAVIGATION_INFO);
         this.nextPage = page.getByRole('button', { name: 'Next' });
         this.prevPage = page.getByRole('button', { name: 'Previous' });
+        this.openModals = page.getByRole('button', { name: '+ New Transaction' });
+        this.firstModal = page.locator('#headlessui-dialog-panel-_r_6_');
+        this.cancelModalButton = page.getByRole('button', { name: 'Cancel' });
+        this.incomeModal = page.getByText('Income', { exact: true });
+        this.expenseModal = page.getByText('Expense', { exact: true });
+        this.incomeModalContainer = page.locator('#headlessui-dialog-panel-_r_e_');
+        this.expenseModalContainer = page.locator('#headlessui-dialog-panel-_r_e_');
+        this.expenseModalDate = page.getByRole('textbox', { name: 'YYYY/MM/DD' });
+        this.expenseModalAmount = page.getByRole('spinbutton', { name: 'Amount' });
+        this.expenseModalDescription = page.getByRole('textbox', { name: 'Description' });
+        this.expenseModalCategory = page.getByLabel('Category');
+        this.expenseModalAccount = page.getByLabel('Account');
+
     }
 
     async mockTransactionsApi(data: TransactionsResponse) {
@@ -87,7 +112,7 @@ export class TransactionsPage {
             expect(this.thirdRowAmount).toHaveCSS('color', 'rgb(239, 68, 68)');
         }
     }
-    
+
     async assertEmptyTransactions() {
         await expect(this.emptyTableMessage).toContainText('No results')
     }
@@ -120,5 +145,61 @@ export class TransactionsPage {
 
     async assertPrevDisabled() {
         await expect(this.prevPage).toBeDisabled();
+    }
+
+    async modalsOpen() {
+        await this.openModals.click();
+    }
+
+    async assertModalOpen() {
+        await expect(this.firstModal).toBeVisible();
+    }
+
+    async modalClose() {
+        await this.cancelModalButton.click();
+    }
+
+    async assertModalClosed() {
+        await expect(this.firstModal).toBeHidden();
+    }
+
+    async keyboardEscapeClick() {
+        await this.page.keyboard.press('Escape');
+    }
+
+    async openIncomeModal() {
+        await this.incomeModal.click();
+    }
+
+    async openExpenseModal() {
+        await this.expenseModal.click();
+    }
+
+    async assertIncomeModalOpen() {
+        await expect(this.incomeModalContainer).toBeVisible();
+    }
+
+    async assertExpenseModalOpen() {
+        await expect(this.expenseModalContainer).toBeVisible();
+    }
+
+    async fillExpenseModalDate() {
+
+    }
+
+    async fillExpenseModalDescription() {
+        
+    }
+
+    async fillExpenseModalAmount() {
+        
+    }
+
+    async fillExpenseModalAccount() {
+        
+    }
+
+    async fillExpenseModalCategory() {
+        
     }
 } 
