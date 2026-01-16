@@ -54,13 +54,13 @@ export const NewTransactionModal: React.FC<NewTransactionModalProps> = ({newModa
                                 <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                     <div className="sm:flex sm:items-start gap-4">
                                         <div className="w-1/2 h-36 bg-background-light rounded-lg ml-4 justify-items-center items-center">
-                                            <div className="h-36 w-36 text-center hover:cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110" onClick={handleIncomeModalOpen}>
+                                            <div className="h-36 w-36 text-center hover:cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110" onClick={handleIncomeModalOpen} data-testid="income-modal-option">
                                                 <ChartLineUpSvg className="stroke-green-500 w-full h-3/4 mt-2" />
                                                 <p className="">Income</p>
                                             </div>
                                         </div>
                                         <div className="w-1/2 h-36 bg-background-light rounded-lg mr-4 justify-items-center items-center">
-                                            <div className="h-36 w-36 text-center hover:cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110" onClick={handleExpenseModalOpen}>
+                                            <div className="h-36 w-36 text-center hover:cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110" onClick={handleExpenseModalOpen} data-testid="expense-modal-option">
                                                 <ChartLineDownSvg className="text-primary w-full h-3/4 mt-2" />
                                                 <p>Expense</p>
                                             </div>
@@ -71,6 +71,7 @@ export const NewTransactionModal: React.FC<NewTransactionModalProps> = ({newModa
                                     <button
                                         type="button"
                                         onClick={handleCloseModals}
+                                        data-testid="modal-cancel-button"
                                         className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"
                                     >
                                         Cancel

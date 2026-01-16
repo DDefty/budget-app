@@ -18,8 +18,8 @@ export const TransactionRow: React.FC<TransactionRowProps> = ({ transaction, han
             </td>
             <td className="p-4 text-sm foreground-light text-muted-light dark:text-slate-200">{transaction.account}	</td>
             {(transaction.amount > 0 ? <td className="p-4 text-sm foreground-light dark:text-slate-200 text-green-500">{transaction.amount} {transaction.currency}</td> : <td className="p-4 text-sm foreground-light dark:text-slate-200 text-red-500">{transaction.amount} {transaction.currency}</td>)}
-            <td className="p-4"><Button onClick={() => handleClickEdit(transaction)} className="bg-white hover:bg-background-light transition-none disabled:opacity-100"><EditSvg /></Button></td>
-            <td className="p-4"><Button onClick={() => handleClick(transaction.id)} className="bg-white hover:bg-background-light transition-none disabled:opacity-100"><DeleteSvg className="size-6 bg-white hover:bg-background-light transition-none disabled:opacity-100" /> </Button> </td>
+            <td className="p-4"><Button onClick={() => handleClickEdit(transaction)} data-testid="edit-transaction-button" className="bg-white hover:bg-background-light transition-none disabled:opacity-100"><EditSvg /></Button></td>
+            <td className="p-4"><Button onClick={() => handleClick(transaction.id)} data-testid="delete-transaction-button" className="bg-white hover:bg-background-light transition-none disabled:opacity-100"><DeleteSvg className="size-6 bg-white hover:bg-background-light transition-none disabled:opacity-100" /> </Button> </td>
         </tr>
     );
 }

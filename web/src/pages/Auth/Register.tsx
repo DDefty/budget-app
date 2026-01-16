@@ -87,6 +87,7 @@ export default function Register() {
                                     type="name"
                                     required
                                     onChange={handleChange}
+                                    data-testid="register-name-input"
                                     className='w-full border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark focus:border-primary'
                                 />
                             </div>
@@ -100,6 +101,7 @@ export default function Register() {
                                     type="email"
                                     required
                                     onChange={handleChange}
+                                    data-testid="register-email-input"
                                     className='w-full border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark focus:border-primary'
                                 />
                             </div>
@@ -113,6 +115,7 @@ export default function Register() {
                                     type="password"
                                     required
                                     onChange={handleChange}
+                                    data-testid="register-password-input"
                                     className='w-full border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark focus:border-primary'
                                 />
                             </div>
@@ -126,11 +129,12 @@ export default function Register() {
                                     type="password"
                                     required
                                     onChange={handleChange}
+                                    data-testid="register-confirm-password-input"
                                     className='w-full border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark focus:border-primary'
                                 />
                             </div>
                             <div className='mt-6'>
-                                <Button type="submit" className="w-full rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary py-2 px-4 text-sm font-semibold">
+                                <Button type="submit" data-testid="register-submit-button" className="w-full rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary py-2 px-4 text-sm font-semibold">
                                     Sign Up
                                 </Button>
                             </div>

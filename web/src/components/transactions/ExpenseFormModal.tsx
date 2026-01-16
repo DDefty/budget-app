@@ -84,7 +84,7 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModal
                             leaveFrom="opacity-100 scale-100 translate-y-0"
                             leaveTo="opacity-0 scale-95 translate-y-4"
                         >
-                            <DialogPanel className="relative transform overflow-visible rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                            <DialogPanel data-testid="expense-form-modal" className="relative transform overflow-visible rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                                 <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                     <div className="sm:flex sm:items-start">
                                         <div className="mt-3 text-center w-full sm:mt-0 mx-14 justify-items-center">
@@ -148,6 +148,7 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModal
                                                 value={Number(addExpenseFormData.amount)}
                                                 onChange={e => setAddExpenseFormData(prev => ({ ...prev, amount: Number(e.target.value) }))}
                                                 required
+                                                data-testid="expense-amount-input"
                                                 className='w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light placeholder:font-medium dark:placeholder-muted-dark focus:border-primary'
                                             />
                                         </div>
@@ -163,6 +164,7 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModal
                                                 onChange={e => setAddExpenseFormData(prev => ({ ...prev, description: e.target.value }))}
                                                 placeholder="Enter expense description..."
                                                 required
+                                                data-testid="expense-description-input"
                                                 className='w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark placeholder:font-semibold focus:border-primary'
                                             />
                                         </div>
@@ -172,7 +174,7 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModal
                                         <div className="space-y-2 ">
                                             <select id="Category" value={addExpenseFormData.category ?? ""} onChange={e => {
                                                 setAddExpenseFormData(prev => ({ ...prev, category: e.target.value }));
-                                            }} className="bg-background-light border px-3 text-muted-light py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-30 font-semibold text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:border-primary">
+                                            }} data-testid="expense-category-select" className="bg-background-light border px-3 text-muted-light py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-30 font-semibold text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:border-primary">
                                                 <option value="" disabled>Select a category</option>
                                                 <option value="Category 1">Category 1</option>
                                                 <option value="Category 2">Category 2</option>
@@ -185,7 +187,7 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModal
                                         <div className="space-y-2 ">
                                             <select id="Account" value={addExpenseFormData.account ?? ""} onChange={e => {
                                                 setAddExpenseFormData(prev => ({ ...prev, account: e.target.value }));
-                                            }} className="bg-background-light border px-3 text-muted-light py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-30 font-semibold text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:border-primary">
+                                            }} data-testid="expense-account-select" className="bg-background-light border px-3 text-muted-light py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-30 font-semibold text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:border-primary">
                                                 <option value="" disabled>Select an account</option>
                                                 <option value="Account 1">Account 1</option>
                                                 <option value="Account 2">Account 2</option>
@@ -203,11 +205,12 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({ expenseModal
                                                 value={addExpenseFormData.note}
                                                 onChange={e => setAddExpenseFormData(prev => ({ ...prev, note: e.target.value }))}
                                                 required
+                                                data-testid="expense-note-input"
                                                 className="w-full h-32 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light placeholder:font-medium placeholder:text-sm dark:placeholder-muted-dark focus:border-primary align-top p-3"
                                             />
                                         </div>
                                         <div className='mt-6 mb-12'>
-                                            <Button type="submit" className="w-full rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary py-2 px-4 text-sm font-semibold">
+                                            <Button type="submit" data-testid="expense-submit-button" className="w-full rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary py-2 px-4 text-sm font-semibold">
                                                 {isEdit ? 'Edit Expense' : 'Add Expense'}
                                             </Button>
                                         </div>
