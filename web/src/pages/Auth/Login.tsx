@@ -81,6 +81,7 @@ export default function Login() {
                                     value={formData.email}
                                     required
                                     onChange={handleChange}
+                                    data-testid="login-email-input"
                                     className='w-full border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark focus:border-primary'
                                 />
                             </div>
@@ -95,6 +96,7 @@ export default function Login() {
                                     value={formData.password}
                                     onChange={handleChange}
                                     required
+                                    data-testid="login-password-input"
                                     className='w-full border-border-light dark:border-border-dark bg-white dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark focus:border-primary'
                                 />
                             </div>
@@ -102,7 +104,7 @@ export default function Login() {
                                 <Link to="/dashboard" className='mt-6 text-primary hover:text-primary/80 text-sm font-medium'>Forgot your password?</Link>
                             </div>
                             <div className='mt-6'>
-                                <Button type="submit" className="w-full rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary py-2 px-4 text-sm font-semibold">
+                                <Button type="submit" data-testid="login-submit-button" className="w-full rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary py-2 px-4 text-sm font-semibold">
                                     Log in
                                 </Button>
                             </div>

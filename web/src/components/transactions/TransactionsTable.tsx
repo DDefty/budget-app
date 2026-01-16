@@ -13,7 +13,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({ transactio
     return (
         <div className="overflow-x-auto rounded-xl">
             {loading ? <Loader /> :
-                    <table className="w-full text-left bg-white rounded-lg border border-gray-200">
+                    <table data-testid="transactions-table" className="w-full text-left bg-white rounded-lg border border-gray-200">
                         <thead>
                             <tr className="border-b bg-background-light border-background-light dark:border-background-dark">
                                 <th className="p-4 text-sm font-semibold text-muted-light">Date</th>

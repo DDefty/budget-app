@@ -34,13 +34,14 @@ export const TransactionsFilters: React.FC<TransactionsFiltersProps> = ({ catego
                         value={query}
                         onChange={e => { e.preventDefault(); setQuery(e.target.value); }}
                         placeholder="Search transactions"
+                        data-testid="transaction-search-input"
                         className='w-full placeholder:px-10 bg-white rounded-lg dark:bg-background-dark text-foreground-light dark:text-foreground-dark placeholder-muted-light dark:placeholder-muted-dark focus:border-primary'
                     />
                 </div>
             </form>
             <div className="flex flex-row h-10 gap-x-4">
                 <form className="max-w-sm">
-                    <select id="category" className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" value={categoryFilter} onChange={e => {
+                    <select id="category" data-testid="category-filter-select" className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" value={categoryFilter} onChange={e => {
                         setCategoryFilter(e.target.value);
                     }}>
                         <option value="">Category</option>
@@ -58,6 +59,7 @@ export const TransactionsFilters: React.FC<TransactionsFiltersProps> = ({ catego
                     onChange={(e) =>
                         setAmountFilter({ ...amountFilter, min: e.target.value })
                     }
+                    data-testid="min-amount-filter-input"
                     className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block max-w-32 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white placeholder:text-foreground-light" />
                 <Input
                     id="MaxAmout"
@@ -68,9 +70,10 @@ export const TransactionsFilters: React.FC<TransactionsFiltersProps> = ({ catego
                     onChange={(e) =>
                         setAmountFilter({ ...amountFilter, max: e.target.value })
                     }
+                    data-testid="max-amount-filter-input"
                     className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block max-w-32 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white placeholder:text-foreground-light" />
                 <form className="max-w-sm">
-                    <select id="Date" className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" value={dateFilter} onChange={e => {
+                    <select id="Date" data-testid="date-filter-select" className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" value={dateFilter} onChange={e => {
                         setDateFilter(e.target.value);
                     }}>
                         <option value="">Date</option>

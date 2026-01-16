@@ -69,6 +69,7 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({ 
           onClick={() => goToPage(page - 1)}
           disabled={prevDisabled}
           aria-disabled={prevDisabled}
+          data-testid="pagination-previous-button"
           className="relative inline-flex items-center bg-white rounded-l-md px-2 py-2 text-primary ring-1 ring-inset ring-gray-300 hover:bg-gray-100 disabled:opacity-50"
         >
           <span className="sr-only">Previous</span>
@@ -101,6 +102,7 @@ export const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({ 
           onClick={() => goToPage(page + 1)}
           disabled={nextDisabled}
           aria-disabled={nextDisabled}
+          data-testid="pagination-next-button"
           className="relative inline-flex items-center rounded-r-md px-2 py-2 bg-white text-primary ring-1 ring-inset ring-gray-300 hover:bg-gray-100 disabled:opacity-50"
         >
           <span className="sr-only">Next</span>
