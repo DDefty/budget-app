@@ -7,6 +7,7 @@ export class LoginPage {
     readonly password: Locator;
     readonly loginButton: Locator;
     readonly errorMessage: Locator;
+    readonly successMessage: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -14,6 +15,7 @@ export class LoginPage {
         this.password = page.getByRole('textbox', { name: 'Password' });
         this.loginButton = page.getByRole('button', { name: 'Log in' });
         this.errorMessage = page.getByText('Invalid email or password.');
+        this.successMessage = page.getByText('Welcome back! Successfully');
     }
 
     async loginPageOpen() {
@@ -42,5 +44,9 @@ export class LoginPage {
 
     async assertErrorMessage() {
         await expect(this.errorMessage).toBeVisible();
+    }
+
+    async assertSuccesMessage() {
+        await expect(this.successMessage).toBeVisible();
     }
 }

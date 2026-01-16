@@ -11,4 +11,5 @@ export async function login(page: Page) {
     await loginPage.fillEmail(email);
     await loginPage.fillPassword(password);
     await loginPage.clickLoginButton();
+    await loginPage.assertSuccesMessage();
 }
