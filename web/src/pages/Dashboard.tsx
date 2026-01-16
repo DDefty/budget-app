@@ -69,7 +69,7 @@ export default function Dashboard() {
         <div className="flex-col w-full h-96 rounded-lg bg-white py-6 px-6 shadow-sm mt-10">
           <div className="flex flex-row content-center justify-between">
             <h3 className="text-xl font-bold mb-6">Recent Transactions</h3>
-            <NavLink to="/transactions" className='text-primary hover:text-primary/80 text-l font-medium'>View all</NavLink>
+            <NavLink data-testid="dashboard-view-all-transactions" to="/transactions" className='text-primary hover:text-primary/80 text-l font-medium'>View all</NavLink>
           </div>
           <div className="overflow-x-auto">
             {!loading ? <table className="w-full text-left">

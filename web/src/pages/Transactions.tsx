@@ -173,7 +173,7 @@ export default function Dashboard() {
       <Toaster />
       <div className="flex flex-row justify-between">
         <h1 className="text-3xl font-bold">Transactions</h1>
-        <Button onClick={newModal.openModal} type="button" className="w-50 h-10 rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm ...">
+        <Button onClick={newModal.openModal} type="button" data-testid="new-transaction-button" className="w-50 h-10 rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm ...">
           + New Transaction
         </Button>
       </div>
