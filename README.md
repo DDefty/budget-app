@@ -4,7 +4,7 @@ Finance Tracker is a full-stack web application for managing personal finances. 
 
 The project consists of a **React (Vite + TypeScript)** frontend and a **Node.js backend built with Express, Prisma, and PostgreSQL**.
 
-## 🚀 Tech Stack
+## Tech Stack
 
 ### Frontend (web/)
 - React 19 + TypeScript
@@ -29,15 +29,15 @@ The project consists of a **React (Vite + TypeScript)** frontend and a **Node.js
 - Faker.js (seeding)
 - Vitest + Supertest (API tests)
 
-## ✨ Key Features
+## Key Features
 
-### 🔐 Authentication
+### Authentication
 - Register and login using JWT-based authentication
 - Secure password hashing (bcrypt)
 - Zod validation on both client and server
 - Clear error messages displayed as toasts
 
-### 🏠 Dashboard
+### Dashboard
 - Total balance preview
 - Monthly spending summary
 - Upcoming bills
@@ -46,7 +46,7 @@ The project consists of a **React (Vite + TypeScript)** frontend and a **Node.js
 - List of recent transactions
 - Loading states for API calls
 
-### 💳 Transaction Management
+### Transaction Management
 - Full CRUD operations
 - Add Income or Expense via modal dialogs
 - Category, amount, and date filters
@@ -55,14 +55,14 @@ The project consists of a **React (Vite + TypeScript)** frontend and a **Node.js
 - Smooth animations with Framer Motion
 - Form validation using Zod
 
-### ⚙️ User Settings
+### User Settings
 - Update email, name, gender, date of birth
 - Privacy Settings
 - Help & Support
 - About section
 - Logout functionality
 
-## 🗄️ Project Structure
+## Project Structure
 
 ```
 /
@@ -70,7 +70,7 @@ The project consists of a **React (Vite + TypeScript)** frontend and a **Node.js
 └── web/       → Frontend (React + TypeScript + TailwindCSS)
 ```
 
-## 🛠️ Getting Started
+## Getting Started
 
 ### Backend Setup
 ```bash
@@ -87,7 +87,7 @@ npm install
 npm run dev
 ```
 
-## 🎯 Purpose of the Project
+## Purpose of the Project
 
 Finance Tracker is built as a clean, modern tool for everyday budgeting.  
 It demonstrates strong full-stack engineering skills, including:
@@ -100,7 +100,7 @@ It demonstrates strong full-stack engineering skills, including:
 - UI/UX with TailwindCSS + component libraries
 - Frontend & backend automated testing
 
-## 📸 Demo
+## Demo
 ![Demo](assets/Demo.gif)
 
 
